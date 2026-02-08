@@ -31,7 +31,7 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
 
   const fetchCountries = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/countries');
+      const response = await fetch('http://localhost:5000/api/countries/active');
       const data = await response.json();
       setCountries(data);
     } catch (err) {
@@ -74,9 +74,9 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
   };
 
   const stats = [
-    { label: t('dashboard.portfolio'), value: '$142,500.00', change: '+2.4%', icon: <Wallet className="text-accent" />, positive: true },
-    { label: t('dashboard.invested'), value: '$120,000.00', change: '-0.5%', icon: <TrendingUp className="text-primary" />, positive: false },
-    { label: t('dashboard.activePlans'), value: '3', change: '', icon: <PieChart className="text-blue-500" />, positive: true },
+    { label: t('dashboard.portfolio'), value: '$0.00', change: '', icon: <Wallet className="text-accent" />, positive: true },
+    { label: t('dashboard.invested'), value: '$0.00', change: '', icon: <TrendingUp className="text-primary" />, positive: true },
+    { label: t('dashboard.activePlans'), value: '0', change: '', icon: <PieChart className="text-blue-500" />, positive: true },
   ];
 
   return (
@@ -145,7 +145,10 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
                 availablePlans.map(plan => (
                   <div key={plan.id} className="plan-item">
                     <div className="plan-main">
-                      <h4>{plan.name}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4>{plan.name}</h4>
+                        {!plan.country_id && <span className="title-badge">GLOBAL</span>}
+                      </div>
                       <p className="focus">{plan.focus}</p>
                     </div>
                     <div className="plan-details-grid">
@@ -358,6 +361,20 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
 
         .plan-main h4 { font-size: 1.1rem; color: var(--primary); margin-bottom: 0.25rem; }
         .plan-main .focus { font-size: 0.85rem; color: #64748b; }
+
+        .title-badge {
+          background: #e0f2fe;
+          color: #0369a1;
+          font-size: 0.65rem;
+          font-weight: 800;
+          padding: 2px 6px;
+          border-radius: 4px;
+          letter-spacing: 0.5px;
+        }
+
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .gap-2 { gap: 0.5rem; }
 
         .plan-details-grid {
           display: grid;

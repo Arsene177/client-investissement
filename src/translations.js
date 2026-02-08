@@ -58,12 +58,14 @@ export const translations = {
             risk: "Risk Assessment",
             focus: "Asset Allocation Focus",
             country: "Target Jurisdiction",
+            allCountries: "All Jurisdictions (Global)",
+            global: "Global",
             stats: {
                 totalUsers: "Registered Clients",
                 totalPlans: "Active Portfolios",
                 globalAUM: "Approx. Global AUM"
             },
-            save: "Commit Changes",
+            save: "Upload and Initialize Portfolio",
             cancel: "Discard"
         },
         hero: {
@@ -213,12 +215,14 @@ export const translations = {
             risk: "Évaluation des Risques",
             focus: "Focus sur l'Allocation d'Actifs",
             country: "Juridiction Cible",
+            allCountries: "Toutes les Juridictions (Global)",
+            global: "Global",
             stats: {
                 totalUsers: "Clients Enregistrés",
                 totalPlans: "Portefeuilles Actifs",
                 globalAUM: "AUM Global Approx."
             },
-            save: "Enregistrer les Modifications",
+            save: "Télécharger et Initialiser le Portefeuille",
             cancel: "Annuler"
         },
         hero: {

@@ -10,10 +10,27 @@ app.use(express.json());
 
 // --- Country & Investment Plan Endpoints ---
 
+// Get countries that have at least one associated investment plan
+app.get('/api/countries/active', async (req, res) => {
+    try {
+        const query = `
+            SELECT DISTINCT c.* 
+            FROM countries c
+            JOIN investment_plans p ON c.id = p.country_id
+            ORDER BY c.name ASC
+        `;
+        const [rows] = await pool.execute(query);
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching active countries:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 // Get all countries
 app.get('/api/countries', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT * FROM countries');
+        const [rows] = await pool.execute('SELECT * FROM countries ORDER BY name ASC');
         res.json(rows);
     } catch (err) {
         console.error('Error fetching countries:', err);
@@ -21,14 +38,71 @@ app.get('/api/countries', async (req, res) => {
     }
 });
 
-// Get plans for a specific country
-app.get('/api/plans/country/:id', async (req, res) => {
-    const { id } = req.params;
+// Admin: Get all plans with country names
+app.get('/api/all-plans', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT * FROM investment_plans WHERE country_id = ?', [id]);
+        const query = `
+      SELECT p.*, c.name as country_name, c.flag as country_flag, c.code as country_code, c.phone_code
+      FROM investment_plans p 
+      LEFT JOIN countries c ON p.country_id = c.id
+      ORDER BY p.created_at DESC
+    `;
+        const [rows] = await pool.execute(query);
         res.json(rows);
     } catch (err) {
         console.error('Error fetching plans:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get plans for a specific country (plus Global plans)
+app.get('/api/plans/country/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const query = 'SELECT * FROM investment_plans WHERE country_id = ? OR country_id IS NULL';
+        const [rows] = await pool.execute(query, [id]);
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching plans:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Admin: Create a new plan
+app.post('/api/plans', async (req, res) => {
+    const { name, roi, min_deposit, risk, focus, country_id } = req.body;
+    try {
+        const query = 'INSERT INTO investment_plans (name, roi, min_deposit, risk, focus, country_id) VALUES (?, ?, ?, ?, ?, ?)';
+        const [result] = await pool.execute(query, [name, roi, min_deposit, risk, focus, country_id]);
+        res.status(201).json({ success: true, id: result.insertId });
+    } catch (err) {
+        console.error('Error creating plan:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Admin: Update a plan
+app.put('/api/plans/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, roi, min_deposit, risk, focus, country_id } = req.body;
+    try {
+        const query = 'UPDATE investment_plans SET name = ?, roi = ?, min_deposit = ?, risk = ?, focus = ?, country_id = ? WHERE id = ?';
+        await pool.execute(query, [name, roi, min_deposit, risk, focus, country_id, id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error updating plan:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Admin: Delete a plan
+app.delete('/api/plans/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.execute('DELETE FROM investment_plans WHERE id = ?', [id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error deleting plan:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -57,6 +131,23 @@ app.put('/api/user/country', async (req, res) => {
         res.json({ success: true, user: rows[0] });
     } catch (err) {
         console.error('Error updating user country:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Admin: Get statistics
+app.get('/api/admin/stats', async (req, res) => {
+    try {
+        const [userCount] = await pool.execute('SELECT COUNT(*) as count FROM users WHERE role = "client"');
+        const [planCount] = await pool.execute('SELECT COUNT(*) as count FROM investment_plans');
+
+        res.json({
+            totalUsers: userCount[0].count,
+            totalPlans: planCount[0].count,
+            globalAUM: '$0.00' // This would typically come from an 'investments' table
+        });
+    } catch (err) {
+        console.error('Error fetching admin stats:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });

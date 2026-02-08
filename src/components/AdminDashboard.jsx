@@ -24,6 +24,7 @@ const AdminDashboard = ({ user, onLogout }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPlan, setEditingPlan] = useState(null);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [stats, setStats] = useState({ totalUsers: 0, totalPlans: 0, globalAUM: '$0.00' });
 
     // Form State
     const [formData, setFormData] = useState({
@@ -32,7 +33,8 @@ const AdminDashboard = ({ user, onLogout }) => {
         min_deposit: '',
         risk: 'Moderate',
         focus: '',
-        country_id: ''
+        country_id: null,
+        country_code_input: 'GLOBAL' // Local state for the input
     });
 
     useEffect(() => {
@@ -42,14 +44,17 @@ const AdminDashboard = ({ user, onLogout }) => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [plansRes, countriesRes] = await Promise.all([
+            const [plansRes, countriesRes, statsRes] = await Promise.all([
                 fetch('http://localhost:5000/api/all-plans'),
-                fetch('http://localhost:5000/api/countries')
+                fetch('http://localhost:5000/api/countries'),
+                fetch('http://localhost:5000/api/admin/stats')
             ]);
             const plansData = await plansRes.json();
             const countriesData = await countriesRes.json();
+            const statsData = await statsRes.json();
             setPlans(plansData);
             setCountries(countriesData);
+            setStats(statsData);
         } catch (err) {
             console.error('Error fetching data:', err);
         } finally {
@@ -66,7 +71,8 @@ const AdminDashboard = ({ user, onLogout }) => {
                 min_deposit: plan.min_deposit,
                 risk: plan.risk,
                 focus: plan.focus,
-                country_id: plan.country_id
+                country_id: plan.country_id,
+                country_code_input: plan.country_id ? (plan.country_code || plan.phone_code) : 'GLOBAL'
             });
         } else {
             setEditingPlan(null);
@@ -76,7 +82,8 @@ const AdminDashboard = ({ user, onLogout }) => {
                 min_deposit: '',
                 risk: 'Moderate',
                 focus: '',
-                country_id: countries[0]?.id || ''
+                country_id: null,
+                country_code_input: 'GLOBAL'
             });
         }
         setIsModalOpen(true);
@@ -123,9 +130,9 @@ const AdminDashboard = ({ user, onLogout }) => {
     };
 
     const adminStats = [
-        { label: t('admin.stats.totalUsers'), value: '1,248', icon: <Users />, color: 'blue' },
-        { label: t('admin.stats.totalPlans'), value: plans.length, icon: <Layers />, color: 'emerald' },
-        { label: t('admin.stats.globalAUM'), value: '$4.2M', icon: <TrendingUp />, color: 'indigo' },
+        { label: t('admin.stats.totalUsers'), value: stats.totalUsers.toLocaleString(), icon: <Users />, color: 'blue' },
+        { label: t('admin.stats.totalPlans'), value: stats.totalPlans.toLocaleString(), icon: <Layers />, color: 'emerald' },
+        { label: t('admin.stats.globalAUM'), value: stats.globalAUM, icon: <TrendingUp />, color: 'indigo' },
     ];
 
     return (
@@ -188,7 +195,14 @@ const AdminDashboard = ({ user, onLogout }) => {
                                 ) : plans.map(plan => (
                                     <tr key={plan.id}>
                                         <td className="font-bold">{plan.name}</td>
-                                        <td><span className="country-tag">{plan.country_flag} {plan.country_name}</span></td>
+                                        <td>
+                                            <span className="country-tag">
+                                                {plan.country_id
+                                                    ? `${plan.country_flag} ${plan.country_name}`
+                                                    : `🌐 ${t('admin.global')}`
+                                                }
+                                            </span>
+                                        </td>
                                         <td className="text-accent font-bold">{plan.roi}</td>
                                         <td>{plan.min_deposit}</td>
                                         <td><span className={`risk-tag ${plan.risk.toLowerCase()}`}>{plan.risk}</span></td>
@@ -226,15 +240,33 @@ const AdminDashboard = ({ user, onLogout }) => {
                                 </div>
                                 <div className="form-group">
                                     <label>{t('admin.country')}</label>
-                                    <select
-                                        value={formData.country_id}
-                                        onChange={e => setFormData({ ...formData, country_id: e.target.value })}
-                                        required
-                                    >
-                                        {countries.map(c => (
-                                            <option key={c.id} value={c.id}>{c.flag} {c.name}</option>
-                                        ))}
-                                    </select>
+                                    <div className="code-input-wrapper">
+                                        <input
+                                            type="text"
+                                            value={formData.country_code_input}
+                                            onChange={e => {
+                                                const val = e.target.value.toUpperCase();
+                                                const found = countries.find(c => c.code === val || c.phone_code === val);
+                                                setFormData({
+                                                    ...formData,
+                                                    country_code_input: val,
+                                                    country_id: val === 'GLOBAL' ? null : (found ? found.id : formData.country_id)
+                                                });
+                                            }}
+                                            placeholder="Code (e.g. US, 237, GLOBAL)"
+                                        />
+                                        <div className="resolved-country">
+                                            {formData.country_id ? (
+                                                <>
+                                                    {countries.find(c => c.id == formData.country_id)?.flag} {' '}
+                                                    {countries.find(c => c.id == formData.country_id)?.name}
+                                                </>
+                                            ) : (
+                                                <span>🌐 {t('admin.global')}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <p className="input-hint">Type ISO code (US, FR) or Phone code (1, 33)</p>
                                 </div>
                                 <div className="form-group">
                                     <label>{t('admin.roi')}</label>
@@ -402,6 +434,26 @@ const AdminDashboard = ({ user, onLogout }) => {
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .full-width { grid-column: span 2; }
         
+        .code-input-wrapper {
+            position: relative;
+        }
+
+        .resolved-country {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-hint {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
         

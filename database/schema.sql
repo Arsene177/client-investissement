@@ -11,10 +11,11 @@ DROP TABLE IF EXISTS countries;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- Countries table
-CREATE TABLE countries (
+CREATE TABLE IF NOT EXISTS countries (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     code CHAR(2) NOT NULL UNIQUE,
+    phone_code VARCHAR(10), -- e.g., "1", "237", "33"
     flag VARCHAR(10) -- Emoji flag
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -36,39 +37,38 @@ CREATE TABLE users (
 CREATE TABLE IF NOT EXISTS investment_plans (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    roi VARCHAR(20) NOT NULL, -- e.g., "6-8%"
-    min_deposit VARCHAR(50) NOT NULL, -- e.g., "$50,000"
+    roi VARCHAR(20) NOT NULL,
+    min_deposit VARCHAR(50) NOT NULL,
     risk ENUM('Low', 'Moderate', 'High', 'Very High') DEFAULT 'Moderate',
     focus VARCHAR(255),
-    country_id INT,
+    country_id INT DEFAULT NULL, -- NULL means Global / All Countries
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed Data: Countries
-INSERT IGNORE INTO countries (id, name, code, flag) VALUES 
-(1, 'USA', 'US', '🇺🇸'),
-(2, 'France', 'FR', '🇫🇷'),
-(3, 'Cameroon', 'CM', '🇨🇲'),
-(4, 'Nigeria', 'NG', '🇳🇬'),
-(5, 'United Kingdom', 'GB', '🇬🇧');
+INSERT IGNORE INTO countries (id, name, code, phone_code, flag) VALUES 
+(1, 'USA', 'US', '1', '🇺🇸'),
+(2, 'France', 'FR', '33', '🇫🇷'),
+(3, 'Cameroon', 'CM', '237', '🇨🇲'),
+(4, 'Nigeria', 'NG', '234', '🇳🇬'),
+(5, 'United Kingdom', 'GB', '44', '🇬🇧'),
+(6, 'Germany', 'DE', '49', '🇩🇪'),
+(7, 'Canada', 'CA', '1', '🇨🇦'),
+(8, 'Japan', 'JP', '81', '🇯🇵'),
+(9, 'China', 'CN', '86', '🇨🇳'),
+(10, 'Australia', 'AU', '61', '🇦🇺'),
+(11, 'Brazil', 'BR', '55', '🇧🇷'),
+(12, 'South Africa', 'ZA', '27', '🇿🇦'),
+(13, 'Ivory Coast', 'CI', '225', '🇨🇮'),
+(14, 'Senegal', 'SN', '221', '🇸🇳'),
+(15, 'United Arab Emirates', 'AE', '971', '🇦🇪'),
+(16, 'Switzerland', 'CH', '41', '🇨🇭'),
+(17, 'Singapore', 'SG', '65', '🇸🇬'),
+(18, 'India', 'IN', '91', '🇮🇳'),
+(19, 'Mexico', 'MX', '52', '🇲🇽'),
+(20, 'Egypt', 'EG', '20', '🇪🇬');
 
--- Seed Data: Investment Plans (USA)
-INSERT IGNORE INTO investment_plans (name, roi, min_deposit, risk, focus, country_id) VALUES 
-('Balanced Tech Portfolio', '8-12%', '$100,000', 'Moderate', 'US Tech Giants & REITs', 1),
-('S&P 500 Dividend Fund', '4-7%', '$25,000', 'Low', 'Dividend-paying Blue Chips', 1);
-
--- Seed Data: Investment Plans (France)
-INSERT IGNORE INTO investment_plans (name, roi, min_deposit, risk, focus, country_id) VALUES 
-('European Green Energy', '6-9%', '€50,000', 'Moderate', 'EU Core Renewable Assets', 2),
-('Paris Real Estate Bond', '4-5%', '€100,000', 'Low', 'Luxury Commercial Property', 2);
-
--- Seed Data: Investment Plans (Cameroon)
-INSERT IGNORE INTO investment_plans (name, roi, min_deposit, risk, focus, country_id) VALUES 
-('Agri-Growth Initiative', '15-20%', '500,000 XAF', 'High', 'Cocoa & Coffee Exporting', 3),
-('Douala Infrastructure Fund', '10-12%', '2,000,000 XAF', 'Moderate', 'Urban Real Estate Development', 3);
-
--- Seed Data: Default Demo Users
-INSERT IGNORE INTO users (username, email, password, role, full_name, selected_country_id) VALUES 
-('client_demo', 'client@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'client', 'John Client', 1),
-('admin_user', 'admin@aureus.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'Lead Admin', 1);
+-- Seed Data: Admin User (password is 'password')
+INSERT IGNORE INTO users (username, email, password, full_name, role) VALUES 
+('admin_user', 'admin@prosperinvest.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Admin', 'admin');
