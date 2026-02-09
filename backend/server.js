@@ -5,8 +5,37 @@ const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 5000;
+
+// Database connection pool (initialize before routes)
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+// CORS configuration for production
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Health check endpoint for Railway
+app.get('/', (req, res) => {
+    res.status(200).json({ status: 'ok', message: 'Prosper Invest API is running' });
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
 
 // --- Country & Investment Plan Endpoints ---
 
@@ -152,23 +181,16 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 5000;
-
-// Database connection pool
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
-
-// Middleware to check database connection
+// Middleware to check database connection (skip for health checks)
 app.use(async (req, res, next) => {
+    // Skip database check for health endpoints
+    if (req.path === '/' || req.path === '/health') {
+        return next();
+    }
+
     try {
-        await pool.getConnection();
+        const connection = await pool.getConnection();
+        connection.release();
         next();
     } catch (err) {
         console.error('Database connection failed:', err);

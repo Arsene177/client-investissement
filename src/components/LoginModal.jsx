@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { X, Lock, User, AlertCircle, CheckCircle, Mail, UserPlus } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 const LoginModal = ({ isOpen, onClose }) => {
   const { t } = useLanguage();
@@ -34,7 +35,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     setLoading(true);
     setError('');
 
-    const endpoint = isRegister ? 'http://localhost:5000/api/register' : 'http://localhost:5000/api/login';
+    const endpoint = isRegister ? API_ENDPOINTS.REGISTER : API_ENDPOINTS.LOGIN;
     const body = isRegister
       ? { username, email, password, full_name: fullName }
       : { username, password };

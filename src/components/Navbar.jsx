@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { TrendingUp, ChevronDown, Menu, X, Globe, User, LogOut } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
-import LoginModal from './LoginModal';
 
-const Navbar = ({ user, onLogout }) => {
+const Navbar = ({ user, onLogout, onLoginClick }) => {
   const { lang, t, switchLanguage } = useLanguage();
   const [country, setCountry] = useState({ name: 'USA', flag: '🇺🇸' });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   return (
     <nav className="navbar">
@@ -52,7 +50,7 @@ const Navbar = ({ user, onLogout }) => {
               </button>
             </div>
           ) : (
-            <button className="btn btn-primary login-btn" onClick={() => setIsLoginOpen(true)}>
+            <button className="btn btn-primary login-btn" onClick={onLoginClick}>
               <User size={16} />
               {t('nav.login')}
             </button>
@@ -89,7 +87,7 @@ const Navbar = ({ user, onLogout }) => {
               <button
                 className="btn btn-primary"
                 style={{ width: '100%', marginTop: '1rem' }}
-                onClick={() => { setIsLoginOpen(true); setIsMobileMenuOpen(false); }}
+                onClick={() => { onLoginClick(); setIsMobileMenuOpen(false); }}
               >
                 {t('nav.login')}
               </button>
@@ -108,8 +106,6 @@ const Navbar = ({ user, onLogout }) => {
           )}
         </div>
       )}
-
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
       <style>{`
                 .navbar {

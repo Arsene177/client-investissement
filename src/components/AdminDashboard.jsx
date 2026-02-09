@@ -15,6 +15,7 @@ import {
     BarChart3,
     Search
 } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 const AdminDashboard = ({ user, onLogout }) => {
     const { t } = useLanguage();
@@ -45,9 +46,9 @@ const AdminDashboard = ({ user, onLogout }) => {
         setLoading(true);
         try {
             const [plansRes, countriesRes, statsRes] = await Promise.all([
-                fetch('http://localhost:5000/api/all-plans'),
-                fetch('http://localhost:5000/api/countries'),
-                fetch('http://localhost:5000/api/admin/stats')
+                fetch(API_ENDPOINTS.ALL_PLANS),
+                fetch(API_ENDPOINTS.COUNTRIES),
+                fetch(API_ENDPOINTS.ADMIN_STATS)
             ]);
             const plansData = await plansRes.json();
             const countriesData = await countriesRes.json();
@@ -93,8 +94,8 @@ const AdminDashboard = ({ user, onLogout }) => {
         e.preventDefault();
         const method = editingPlan ? 'PUT' : 'POST';
         const url = editingPlan
-            ? `http://localhost:5000/api/plans/${editingPlan.id}`
-            : 'http://localhost:5000/api/plans';
+            ? API_ENDPOINTS.PLAN_BY_ID(editingPlan.id)
+            : API_ENDPOINTS.PLANS;
 
         try {
             const response = await fetch(url, {
@@ -118,7 +119,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         if (!window.confirm(t('admin.confirmDelete'))) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/plans/${id}`, { method: 'DELETE' });
+            const response = await fetch(API_ENDPOINTS.PLAN_BY_ID(id), { method: 'DELETE' });
             if (response.ok) {
                 setPlans(plans.filter(p => p.id !== id));
                 setMessage({ type: 'success', text: 'Plan deleted' });

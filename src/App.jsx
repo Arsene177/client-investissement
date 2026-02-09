@@ -9,10 +9,12 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import AdminDashboard from './components/AdminDashboard';
+import LoginModal from './components/LoginModal';
 import { LanguageProvider } from './LanguageContext';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -29,7 +31,7 @@ function App() {
   return (
     <LanguageProvider>
       <div className="App">
-        <Navbar user={user} onLogout={handleLogout} />
+        <Navbar user={user} onLogout={handleLogout} onLoginClick={() => setIsLoginOpen(true)} />
         {user ? (
           user.role === 'admin' ? (
             <AdminDashboard user={user} onLogout={handleLogout} />
@@ -38,7 +40,7 @@ function App() {
           )
         ) : (
           <>
-            <Hero />
+            <Hero onLoginClick={() => setIsLoginOpen(true)} />
             <Services />
             <InvestmentPlans />
             <Insights />
@@ -47,6 +49,7 @@ function App() {
           </>
         )}
         <Footer />
+        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       </div>
     </LanguageProvider>
   );

@@ -14,6 +14,7 @@ import {
   ChevronRight,
   BarChart4
 } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/api';
 
 const Dashboard = ({ user: initialUser, onLogout }) => {
   const { t } = useLanguage();
@@ -31,7 +32,7 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
 
   const fetchCountries = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/countries/active');
+      const response = await fetch(API_ENDPOINTS.ACTIVE_COUNTRIES);
       const data = await response.json();
       setCountries(data);
     } catch (err) {
@@ -42,7 +43,7 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
   const fetchPlans = async (countryId) => {
     setLoadingPlans(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/plans/country/${countryId}`);
+      const response = await fetch(API_ENDPOINTS.PLANS_BY_COUNTRY(countryId));
       const data = await response.json();
       setAvailablePlans(data);
     } catch (err) {
@@ -57,7 +58,7 @@ const Dashboard = ({ user: initialUser, onLogout }) => {
     if (!countryId) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/user/country', {
+      const response = await fetch(API_ENDPOINTS.UPDATE_USER_COUNTRY, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id, countryId })

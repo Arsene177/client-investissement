@@ -79,6 +79,35 @@ cd backend
 npm run dev
 ```
 
+## Deployment
+
+### Production Deployment
+
+The application is configured for deployment to:
+- **Frontend**: Vercel
+- **Backend**: Railway (with MySQL database)
+
+For detailed deployment instructions, see the [Deployment Guide](./docs/DEPLOYMENT.md).
+
+### Environment Variables
+
+**Backend** (`.env` in `backend/` directory):
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=your_password
+DB_NAME=aureus_wealth
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+```
+
+**Frontend** (`.env.development` in root directory):
+```env
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+For production, set `VITE_API_BASE_URL` to your Railway backend URL in Vercel's environment variables.
+
 ## Default Credentials
 
 **Admin Account:**

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLanguage } from '../LanguageContext';
 
-const Hero = () => {
+const Hero = ({ onLoginClick }) => {
   const { t } = useLanguage();
 
   return (
@@ -10,7 +10,7 @@ const Hero = () => {
         <div className="hero-content">
           <h1>{t('hero.title')}</h1>
           <p>{t('hero.subtitle')}</p>
-          <a href="#plans" className="btn btn-hero">{t('hero.cta')}</a>
+          <button onClick={onLoginClick} className="btn btn-hero">Register now</button>
         </div>
       </div>
 
