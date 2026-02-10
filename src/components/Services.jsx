@@ -1,95 +1,116 @@
 import React from 'react';
-import { Shield, Target, Rocket } from 'lucide-react';
+import { PieChart, TrendingUp, BarChart2 } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
 
 const Services = () => {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
 
-    const services = [
-        {
-            icon: <Shield size={40} />,
-            title: t('services.assetManagement.title'),
-            desc: t('services.assetManagement.desc')
-        },
-        {
-            icon: <Target size={40} />,
-            title: t('services.wealthPlanning.title'),
-            desc: t('services.wealthPlanning.desc')
-        },
-        {
-            icon: <Rocket size={40} />,
-            title: t('services.retirement.title'),
-            desc: t('services.retirement.desc')
-        }
-    ];
+  const services = [
+    {
+      icon: <PieChart size={36} />,
+      title: t('services.portfolio.title'),
+      description: t('services.portfolio.desc')
+    },
+    {
+      icon: <TrendingUp size={36} />,
+      title: t('services.advisory.title'),
+      description: t('services.advisory.desc')
+    },
+    {
+      icon: <BarChart2 size={36} />,
+      title: t('services.analysis.title'),
+      description: t('services.analysis.desc')
+    }
+  ];
 
-    return (
-        <section id="services" className="services-section">
-            <div className="container">
-                <div className="section-header">
-                    <h2>{t('services.title')}</h2>
-                    <p>{t('services.subtitle')}</p>
-                </div>
-                <div className="services-grid">
-                    {services.map((s, i) => (
-                        <div key={i} className="service-card">
-                            <div className="service-icon">{s.icon}</div>
-                            <h3>{s.title}</h3>
-                            <p>{s.desc}</p>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <section className="services">
+      <div className="container">
+        <h2 className="section-title">{t('services.title')}</h2>
+        <div className="services-grid">
+          {services.map((service, index) => (
+            <div key={index} className="service-card">
+              <div className="service-icon">{service.icon}</div>
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
             </div>
-            <style>{`
-        .services-section {
-          padding: 8rem 0;
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        .services {
+          padding: 6rem 0;
           background: var(--white);
         }
-        .section-header {
+
+        .section-title {
           text-align: center;
+          font-size: 3rem;
+          color: var(--primary);
           margin-bottom: 4rem;
         }
-        .section-header h2 {
-          font-size: 2.5rem;
-          margin-bottom: 1rem;
-        }
-        .section-header p {
-          color: #64748b;
-          max-width: 600px;
-          margin: 0 auto;
-        }
+
         .services-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
+          gap: 2.5rem;
         }
+
         .service-card {
+          background: var(--white);
           padding: 3rem 2rem;
-          border-radius: 12px;
-          border: 1px solid #eee;
+          border-radius: 16px;
           text-align: center;
-          transition: var(--transition);
-        }
-        .service-card:hover {
-          transform: translateY(-5px);
           box-shadow: var(--shadow);
-          border-color: var(--accent);
+          transition: var(--transition);
+          border: 1px solid #E2E8F0;
         }
+
+        .service-card:hover {
+          transform: translateY(-8px);
+          box-shadow: var(--shadow-lg);
+          border-color: var(--accent-blue);
+        }
+
         .service-icon {
-          color: var(--accent);
+          color: var(--accent-blue);
           margin-bottom: 1.5rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
+
         .service-card h3 {
-          margin-bottom: 1rem;
           font-size: 1.5rem;
+          color: var(--primary);
+          margin-bottom: 1rem;
+          font-weight: 600;
         }
+
         .service-card p {
-          color: #64748b;
-          font-size: 0.95rem;
+          color: var(--text-light);
+          line-height: 1.6;
+          font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+          .section-title {
+            font-size: 2.25rem;
+          }
+
+          .services-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+
+          .service-card {
+            padding: 2.5rem 1.5rem;
+          }
         }
       `}</style>
-        </section>
-    );
+    </section>
+  );
 };
 
 export default Services;

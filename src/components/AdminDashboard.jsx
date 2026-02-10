@@ -32,8 +32,14 @@ const AdminDashboard = ({ user, onLogout }) => {
         name: '',
         roi: '',
         min_deposit: '',
+        settlement_time: '24H',
         risk: 'Moderate',
         focus: '',
+        description_en: '',
+        description_fr: '',
+        badge: 'STANDARD',
+        display_order: 0,
+        is_active: true,
         country_id: null,
         country_code_input: 'GLOBAL' // Local state for the input
     });
@@ -70,8 +76,14 @@ const AdminDashboard = ({ user, onLogout }) => {
                 name: plan.name,
                 roi: plan.roi,
                 min_deposit: plan.min_deposit,
+                settlement_time: plan.settlement_time || '24H',
                 risk: plan.risk,
-                focus: plan.focus,
+                focus: plan.focus || '',
+                description_en: plan.description_en || '',
+                description_fr: plan.description_fr || '',
+                badge: plan.badge || 'STANDARD',
+                display_order: plan.display_order || 0,
+                is_active: plan.is_active !== undefined ? plan.is_active : true,
                 country_id: plan.country_id,
                 country_code_input: plan.country_id ? (plan.country_code || plan.phone_code) : 'GLOBAL'
             });
@@ -81,8 +93,14 @@ const AdminDashboard = ({ user, onLogout }) => {
                 name: '',
                 roi: '',
                 min_deposit: '',
+                settlement_time: '24H',
                 risk: 'Moderate',
                 focus: '',
+                description_en: '',
+                description_fr: '',
+                badge: 'STANDARD',
+                display_order: 0,
+                is_active: true,
                 country_id: null,
                 country_code_input: 'GLOBAL'
             });
@@ -308,6 +326,70 @@ const AdminDashboard = ({ user, onLogout }) => {
                                         onChange={e => setFormData({ ...formData, focus: e.target.value })}
                                         placeholder="Describe market focus..."
                                         rows="2"
+                                    ></textarea>
+                                </div>
+                                <div className="form-group">
+                                    <label>Settlement Time</label>
+                                    <input
+                                        type="text"
+                                        value={formData.settlement_time}
+                                        onChange={e => setFormData({ ...formData, settlement_time: e.target.value })}
+                                        placeholder="e.g. 24H, 48H, 72H"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Badge</label>
+                                    <select
+                                        value={formData.badge}
+                                        onChange={e => setFormData({ ...formData, badge: e.target.value })}
+                                    >
+                                        <option>STANDARD</option>
+                                        <option>STARTER</option>
+                                        <option>POPULAR</option>
+                                        <option>PREMIUM</option>
+                                        <option>EXCLUSIVE</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Display Order</label>
+                                    <input
+                                        type="number"
+                                        value={formData.display_order}
+                                        onChange={e => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Status</label>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.is_active}
+                                            onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
+                                            style={{ width: 'auto', margin: 0 }}
+                                        />
+                                        <span style={{ fontSize: '0.9rem', color: formData.is_active ? '#10b981' : '#64748b' }}>
+                                            {formData.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="form-group full-width">
+                                    <label>Description (English)</label>
+                                    <textarea
+                                        value={formData.description_en}
+                                        onChange={e => setFormData({ ...formData, description_en: e.target.value })}
+                                        placeholder="English description for this plan..."
+                                        rows="3"
+                                    ></textarea>
+                                </div>
+                                <div className="form-group full-width">
+                                    <label>Description (French)</label>
+                                    <textarea
+                                        value={formData.description_fr}
+                                        onChange={e => setFormData({ ...formData, description_fr: e.target.value })}
+                                        placeholder="Description française pour ce plan..."
+                                        rows="3"
                                     ></textarea>
                                 </div>
                             </div>

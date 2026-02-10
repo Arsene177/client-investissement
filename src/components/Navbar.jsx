@@ -1,22 +1,79 @@
 import React, { useState } from 'react';
 import { TrendingUp, ChevronDown, Menu, X, Globe, User, LogOut } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
+import { useCountry } from '../CountryContext';
 
 const Navbar = ({ user, onLogout, onLoginClick }) => {
   const { lang, t, switchLanguage } = useLanguage();
-  const [country, setCountry] = useState({ name: 'USA', flag: '🇺🇸' });
+  const { selectedCountry, countries, changeCountry } = useCountry();
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <nav className="navbar">
       <div className="container nav-content">
         <a href="/" className="logo">
-          <TrendingUp className="logo-icon" />
-          <span>AUREUS</span>
-          <small>Wealth Management</small>
+          <div className="logo-network">
+            <svg width="32" height="32" viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#3B82F6" />
+                  <stop offset="100%" stopColor="#A855F7" />
+                </linearGradient>
+              </defs>
+              <circle cx="20" cy="30" r="8" fill="url(#logoGradient)" />
+              <circle cx="50" cy="20" r="8" fill="url(#logoGradient)" />
+              <circle cx="80" cy="30" r="8" fill="url(#logoGradient)" />
+              <circle cx="50" cy="80" r="8" fill="url(#logoGradient)" />
+              <circle cx="20" cy="70" r="8" fill="url(#logoGradient)" />
+              <circle cx="80" cy="70" r="8" fill="url(#logoGradient)" />
+              <line x1="20" y1="30" x2="50" y2="20" stroke="url(#logoGradient)" strokeWidth="3" />
+              <line x1="50" y1="20" x2="80" y2="30" stroke="url(#logoGradient)" strokeWidth="3" />
+              <line x1="20" y1="70" x2="50" y2="80" stroke="url(#logoGradient)" strokeWidth="3" />
+              <line x1="50" y1="80" x2="80" y2="70" stroke="url(#logoGradient)" strokeWidth="3" />
+              <line x1="20" y1="30" x2="20" y2="70" stroke="url(#logoGradient)" strokeWidth="3" />
+              <line x1="80" y1="30" x2="80" y2="70" stroke="url(#logoGradient)" strokeWidth="3" />
+            </svg>
+          </div>
+          <div className="logo-text">
+            <span className="logo-name">NEXUS</span>
+            <small>TRADING GROUP</small>
+          </div>
         </a>
 
         <div className="nav-actions-desktop">
+          {/* Country Selector */}
+          {selectedCountry && (
+            <div className="country-selector">
+              <button
+                className="country-btn"
+                onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+              >
+                <span className="country-flag">{selectedCountry.flag}</span>
+                <span className="country-name">{selectedCountry.name}</span>
+                <ChevronDown size={14} />
+              </button>
+
+              {isCountryDropdownOpen && (
+                <div className="country-dropdown">
+                  {countries.map(country => (
+                    <button
+                      key={country.id}
+                      className={`country-option ${selectedCountry.id === country.id ? 'active' : ''}`}
+                      onClick={() => {
+                        changeCountry(country);
+                        setIsCountryDropdownOpen(false);
+                      }}
+                    >
+                      <span className="country-flag">{country.flag}</span>
+                      <span>{country.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="lang-switcher">
             <Globe size={14} />
             <button
@@ -127,27 +184,38 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
                 .logo {
                     text-decoration: none;
                     display: flex;
-                    flex-direction: column;
-                    line-height: 1;
+                    align-items: center;
+                    gap: 0.75rem;
                     color: var(--white);
                 }
 
-                .logo-icon {
-                    color: var(--accent);
-                    margin-bottom: 4px;
+                .logo-network {
+                    display: flex;
+                    align-items: center;
                 }
 
-                .logo span {
-                    font-size: 1.2rem;
+                .logo-text {
+                    display: flex;
+                    flex-direction: column;
+                    line-height: 1.1;
+                }
+
+                .logo-name {
+                    font-size: 1.4rem;
                     font-weight: 800;
-                    letter-spacing: 1px;
+                    letter-spacing: 1.5px;
+                    background: linear-gradient(135deg, #3B82F6 0%, #A855F7 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
                 }
 
-                .logo small {
+                .logo-text small {
                     font-size: 0.6rem;
                     text-transform: uppercase;
                     opacity: 0.8;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 1px;
+                    color: var(--white);
                 }
 
                 .nav-actions-desktop {
@@ -183,6 +251,76 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
 
                 .lang-switcher .separator {
                     opacity: 0.3;
+                }
+
+                .country-selector {
+                    position: relative;
+                    margin-right: 1.5rem;
+                }
+
+                .country-btn {
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 8px;
+                    padding: 0.5rem 0.75rem;
+                    color: var(--white);
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    font-size: 0.85rem;
+                    transition: var(--transition);
+                }
+
+                .country-btn:hover {
+                    background: rgba(255, 255, 255, 0.15);
+                }
+
+                .country-flag {
+                    font-size: 1.2rem;
+                }
+
+                .country-name {
+                    font-weight: 500;
+                }
+
+                .country-dropdown {
+                    position: absolute;
+                    top: calc(100% + 0.5rem);
+                    left: 0;
+                    background: var(--white);
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                    min-width: 200px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    padding: 0.5rem;
+                }
+
+                .country-option {
+                    width: 100%;
+                    background: none;
+                    border: none;
+                    padding: 0.75rem 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: var(--transition);
+                    color: var(--text);
+                    font-size: 0.9rem;
+                    text-align: left;
+                }
+
+                .country-option:hover {
+                    background: var(--bg);
+                }
+
+                .country-option.active {
+                    background: var(--accent-gradient);
+                    color: var(--white);
                 }
 
                 .nav-links {

@@ -1,13 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@700&display=swap');
 
 :root {
+  /* Nexus Trading Group Color Scheme - Blue to Purple Gradient */
   --primary: #0A192F;
-  --accent: #10B981;
-  --accent-gold: #D4AF37;
+  --primary-light: #1a2942;
+  --accent-blue: #3B82F6;
+  --accent-purple: #A855F7;
+  --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #A855F7 100%);
   --bg: #F8FAFC;
+  --bg-dark: #0F172A;
   --text: #1E293B;
+  --text-light: #64748B;
   --white: #FFFFFF;
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --transition: all 0.3s ease;
 }
 
@@ -25,7 +31,9 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: 'Merriweather', serif;
   color: var(--primary);
 }
@@ -49,14 +57,17 @@ h1, h2, h3 {
 }
 
 .btn-primary {
-  background-color: var(--accent);
+  background: var(--accent-gradient);
   color: var(--white);
+  border: 2px solid transparent;
 }
 
 .btn-primary:hover {
-  background-color: #059669;
+  background: transparent;
+  border: 2px solid var(--accent-purple);
+  color: var(--accent-purple);
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
 }
 
 section {

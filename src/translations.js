@@ -69,25 +69,79 @@ export const translations = {
             cancel: "Discard"
         },
         hero: {
-            title: "Secure Your Future. Cultivate Your Wealth.",
-            subtitle: "Partner with us for transparent, sustainable, and tailored investment strategies.",
-            cta: "Explore Investment Plans"
+            title: "Secure Your Financial Future",
+            subtitle: "Precision. Discipline. Profit. — Transparent returns, expert management, and guaranteed results.",
+            cta: "Start Investing",
+            guarantee: "7-Day Money-Back Guarantee*"
+        },
+        stats: {
+            dailyReturn: "Daily Return Rate",
+            withdrawalTime: "Average Withdrawal Time",
+            minInvestment: "Minimum Investment",
+            satisfaction: "Client Satisfaction & Reliability"
         },
         services: {
-            title: "Our Expert Services",
-            subtitle: "Comprehensive financial solutions designed to protect and grow your assets.",
-            assetManagement: {
-                title: "Asset Management",
-                desc: "Professional portfolio management tailored to your risk tolerance and goals."
+            title: "Our Key Services",
+            portfolio: {
+                title: "Portfolio Management",
+                desc: "Tailored solutions, real-time tracking, and transparent reporting"
             },
-            wealthPlanning: {
-                title: "Wealth Planning",
-                desc: "Strategic long-term planning for wealth preservation and transfer."
+            advisory: {
+                title: "Investment Advisory",
+                desc: "Personalized recommendations for your investments"
             },
-            retirement: {
-                title: "Retirement Solutions",
-                desc: "Secure your future with our customized retirement and pension strategies."
+            analysis: {
+                title: "Performance Analysis",
+                desc: "Regular evaluation of portfolio performance"
             }
+        },
+        whyChooseUs: {
+            title: "Why Choose Nexus?",
+            intro: "Nexus Trading Group is built on three pillars: precision, discipline, and profit. We maximize your returns while protecting your capital.",
+            precision: {
+                title: "Precision",
+                desc: "Advanced algorithms, data-driven strategies, and meticulous market analysis."
+            },
+            discipline: {
+                title: "Discipline",
+                desc: "Strict risk management, regulatory compliance, and consistent execution."
+            },
+            profit: {
+                title: "Profit",
+                desc: "Proven track record, optimized returns, and dedicated account management."
+            }
+        },
+        investmentPlans: {
+            title: "Our Investment Plans",
+            subtitle: "Explore our flexible plans, designed for all investor profiles.",
+            bronze: "Bronze Plan",
+            silver: "Silver Plan",
+            gold: "Gold Plan",
+            entry: "Entry",
+            roi: "ROI",
+            settlement: "Settlement",
+            startTrading: "Start Investing",
+            subscribe: "Subscribe to a Plan",
+            bronzeDesc: "Perfect for beginners looking to start investing with a solid foundation and consistent returns.",
+            silverDesc: "Our most popular plan offering balanced risk and reward with faster settlement times for active investors.",
+            goldDesc: "Premium tier with maximum returns and fastest settlement for experienced investors seeking optimal performance."
+        },
+        marketInfo: {
+            title: "Where & How We Invest",
+            targetMarkets: "Investment Sectors",
+            analysisTools: "Our Analysis Tools",
+            crypto: "Digital Assets",
+            cryptoMarkets: "Cryptocurrency portfolios",
+            forex: "Foreign Exchange",
+            forexMarkets: "Currency markets, Commodities",
+            stocks: "Equity Markets",
+            stockMarkets: "Global stocks, Blue chips",
+            derivatives: "Alternative Investments",
+            derivativesMarkets: "Diversified instruments",
+            realtime: "Real-time market intelligence",
+            technical: "Technical & fundamental analysis",
+            ai: "AI-powered investment algorithms",
+            risk: "Risk assessment & compliance monitoring"
         },
         insights: {
             title: "Market Insights",
@@ -226,25 +280,79 @@ export const translations = {
             cancel: "Annuler"
         },
         hero: {
-            title: "Sécurisez Votre Avenir. Cultivez Votre Richesse.",
-            subtitle: "Partenaire de confiance pour des stratégies d'investissement transparentes, durables et sur mesure.",
-            cta: "Explorer les Plans d'Investissement"
+            title: "Sécurisez Votre Avenir Financier",
+            subtitle: "Précision. Discipline. Profit. — Des rendements transparents, une gestion experte et des résultats garantis.",
+            cta: "Commencer à Investir",
+            guarantee: "Garantie de Remboursement de 7 Jours*"
+        },
+        stats: {
+            dailyReturn: "Taux de Rendement Journalier",
+            withdrawalTime: "Délai Moyen de Retrait",
+            minInvestment: "Investissement Minimum",
+            satisfaction: "Satisfaction Client & Fiabilité"
         },
         services: {
-            title: "Nos Services Experts",
-            subtitle: "Solutions financières complètes conçues pour protéger et faire fructifier vos actifs.",
-            assetManagement: {
-                title: "Gestion d'Actifs",
-                desc: "Gestion de portefeuille professionnelle adaptée à votre tolérance au risque et à vos objectifs."
+            title: "Nos Services Clés",
+            portfolio: {
+                title: "Gestion de Portefeuille",
+                desc: "Solutions sur-mesure, suivi en temps réel et reporting transparent"
             },
-            wealthPlanning: {
-                title: "Planification Patrimoniale",
-                desc: "Planification stratégique à long terme pour la préservation et le transfert du patrimoine."
+            advisory: {
+                title: "Conseils en Investissement",
+                desc: "Recommandations personnalisées pour vos investissements"
             },
-            retirement: {
-                title: "Solutions de Retraite",
-                desc: "Sécurisez votre avenir avec nos stratégies personnalisées de retraite et de pension."
+            analysis: {
+                title: "Analyse des Performances",
+                desc: "Évaluation régulière des performances du portefeuille"
             }
+        },
+        whyChooseUs: {
+            title: "Pourquoi Choisir Nexus ?",
+            intro: "Nexus Trading Group s'appuie sur trois piliers : précision, discipline et profit. Nous maximisons vos rendements tout en protégeant votre capital.",
+            precision: {
+                title: "Précision",
+                desc: "Algorithmes avancés, stratégies basées sur les données et analyse méticuleuse du marché."
+            },
+            discipline: {
+                title: "Discipline",
+                desc: "Gestion stricte des risques, conformité réglementaire et exécution cohérente."
+            },
+            profit: {
+                title: "Profit",
+                desc: "Historique éprouvé, rendements optimisés et gestion de compte dédiée."
+            }
+        },
+        investmentPlans: {
+            title: "Nos Plans d'Investissement",
+            subtitle: "Explorez nos formules flexibles, conçues pour tous les profils d'investisseurs.",
+            bronze: "Plan Bronze",
+            silver: "Plan Silver",
+            gold: "Plan Gold",
+            entry: "Entrée",
+            roi: "ROI",
+            settlement: "Règlement",
+            startTrading: "Commencer à Investir",
+            subscribe: "Souscrire à un Plan",
+            bronzeDesc: "Parfait pour les débutants qui cherchent à commencer à investir avec une base solide et des rendements constants.",
+            silverDesc: "Notre plan le plus populaire offrant un équilibre entre risque et récompense avec des délais de règlement plus rapides pour les investisseurs actifs.",
+            goldDesc: "Niveau premium avec des rendements maximaux et le règlement le plus rapide pour les investisseurs expérimentés recherchant des performances optimales."
+        },
+        marketInfo: {
+            title: "Où et Comment Nous Investissons",
+            targetMarkets: "Secteurs d'Investissement",
+            analysisTools: "Nos Outils d'Analyse",
+            crypto: "Actifs Numériques",
+            cryptoMarkets: "Portefeuilles de cryptomonnaies",
+            forex: "Devises Étrangères",
+            forexMarkets: "Marchés des devises, Matières premières",
+            stocks: "Marchés Boursiers",
+            stockMarkets: "Actions mondiales, Blue chips",
+            derivatives: "Investissements Alternatifs",
+            derivativesMarkets: "Instruments diversifiés",
+            realtime: "Intelligence de marché en temps réel",
+            technical: "Analyse technique et fondamentale",
+            ai: "Algorithmes d'investissement alimentés par l'IA",
+            risk: "Évaluation des risques et surveillance de la conformité"
         },
         insights: {
             title: "Aperçus du Marché",

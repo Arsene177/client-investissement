@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Stats from './components/Stats';
 import Services from './components/Services';
+import WhyChooseUs from './components/WhyChooseUs';
 import InvestmentPlans from './components/InvestmentPlans';
+import MarketInfo from './components/MarketInfo';
 import Insights from './components/Insights';
 import AboutUs from './components/AboutUs';
 import Contact from './components/Contact';
@@ -41,9 +44,11 @@ function App() {
         ) : (
           <>
             <Hero onLoginClick={() => setIsLoginOpen(true)} />
+            <Stats />
             <Services />
+            <WhyChooseUs />
             <InvestmentPlans />
-            <Insights />
+            <MarketInfo />
             <AboutUs />
             <Contact />
           </>

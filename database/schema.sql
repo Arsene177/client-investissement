@@ -39,11 +39,20 @@ CREATE TABLE IF NOT EXISTS investment_plans (
     name VARCHAR(100) NOT NULL,
     roi VARCHAR(20) NOT NULL,
     min_deposit VARCHAR(50) NOT NULL,
+    settlement_time VARCHAR(20) DEFAULT '24H',
     risk ENUM('Low', 'Moderate', 'High', 'Very High') DEFAULT 'Moderate',
     focus VARCHAR(255),
+    description_en TEXT,
+    description_fr TEXT,
+    badge VARCHAR(50) DEFAULT 'STANDARD',
+    display_order INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
     country_id INT DEFAULT NULL, -- NULL means Global / All Countries
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE
+    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE,
+    INDEX idx_country (country_id),
+    INDEX idx_active (is_active),
+    INDEX idx_order (display_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed Data: Countries
