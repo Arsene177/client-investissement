@@ -24,7 +24,7 @@ const Services = () => {
   ];
 
   return (
-    <section className="services">
+    <section id="services" className="services">
       <div className="container">
         <h2 className="section-title">{t('services.title')}</h2>
         <div className="services-grid">

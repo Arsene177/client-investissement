@@ -1,12 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@700&display=swap');
 
 :root {
-  /* Nexus Trading Group Color Scheme - Blue to Purple Gradient */
+  /* FUTUR GROUP INVEST Color Scheme - Blue to Gold Gradient */
   --primary: #0A192F;
   --primary-light: #1a2942;
   --accent-blue: #3B82F6;
+  --accent-gold: #F59E0B;
   --accent-purple: #A855F7;
-  --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #A855F7 100%);
+  --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #F59E0B 100%);
+  --accent-gradient-alt: linear-gradient(135deg, #3B82F6 0%, #A855F7 100%);
   --bg: #F8FAFC;
   --bg-dark: #0F172A;
   --text: #1E293B;

@@ -5,7 +5,7 @@ const Hero = ({ onLoginClick }) => {
   const { t } = useLanguage();
 
   return (
-    <header className="hero">
+    <header id="home" className="hero">
       <div className="container hero-container">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -74,7 +74,7 @@ const Hero = ({ onLoginClick }) => {
           font-size: 4rem;
           line-height: 1.1;
           font-weight: 700;
-          background: linear-gradient(135deg, #3B82F6 0%, #A855F7 100%);
+          background: linear-gradient(135deg, #3B82F6 0%, #F59E0B 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_ENDPOINTS } from './config/api';
 
 const CountryContext = createContext();
 
@@ -25,7 +26,7 @@ export const CountryProvider = ({ children }) => {
         const defaultCountryCode = detectCountry();
 
         // Fetch countries and set default
-        fetch('/api/countries')
+        fetch(API_ENDPOINTS.COUNTRIES)
             .then(res => res.json())
             .then(data => {
                 setCountries(data);

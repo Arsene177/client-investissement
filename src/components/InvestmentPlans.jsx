@@ -26,48 +26,11 @@ const InvestmentPlans = () => {
       setPlans(activePlans);
     } catch (error) {
       console.error('Failed to fetch plans:', error);
-      // Fallback to hardcoded plans if API fails
-      setPlans(getDefaultPlans());
+      setPlans([]);
     } finally {
       setLoading(false);
     }
   };
-
-  const getDefaultPlans = () => [
-    {
-      name: t('investmentPlans.bronze'),
-      badge: 'STARTER',
-      min_deposit: '$150',
-      roi: '15%',
-      settlement_time: '72H',
-      description_en: 'Perfect for beginners looking to start investing with a solid foundation and consistent returns.',
-      description_fr: 'Parfait pour les débutants qui cherchent à commencer à investir avec une base solide et des rendements constants.',
-      gradient: 'linear-gradient(135deg, #CD7F32 0%, #B87333 100%)',
-      borderColor: '#CD7F32'
-    },
-    {
-      name: t('investmentPlans.silver'),
-      badge: 'POPULAR',
-      min_deposit: '$100',
-      roi: '20%',
-      settlement_time: '48H',
-      description_en: 'Our most popular plan offering balanced risk and reward with faster settlement times for active investors.',
-      description_fr: 'Notre plan le plus populaire offrant un équilibre entre risque et récompense avec des délais de règlement plus rapides pour les investisseurs actifs.',
-      gradient: 'linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%)',
-      borderColor: '#C0C0C0'
-    },
-    {
-      name: t('investmentPlans.gold'),
-      badge: 'PREMIUM',
-      min_deposit: '$90',
-      roi: '25%',
-      settlement_time: '24H',
-      description_en: 'Premium tier with maximum returns and fastest settlement for experienced investors seeking optimal performance.',
-      description_fr: 'Niveau premium avec des rendements maximaux et le règlement le plus rapide pour les investisseurs expérimentés recherchant des performances optimales.',
-      gradient: 'linear-gradient(135deg, #FFD700 0%, #FFC700 100%)',
-      borderColor: '#FFD700'
-    }
-  ];
 
   const getGradientForPlan = (planName) => {
     if (planName.toLowerCase().includes('bronze')) return 'linear-gradient(135deg, #CD7F32 0%, #B87333 100%)';
@@ -83,7 +46,23 @@ const InvestmentPlans = () => {
     return '#3B82F6'; // Default color
   };
 
-  const displayPlans = plans.length > 0 ? plans : getDefaultPlans();
+  if (!loading && plans.length === 0) {
+    return (
+      <section className="investment-plans">
+        <div className="container">
+          <div className="section-header">
+            <h2>{t('investmentPlans.title')}</h2>
+            <p>{t('investmentPlans.subtitle')}</p>
+          </div>
+          <div className="loading-state">
+            {t('investmentPlans.noPlans') || 'No investment plans available at the moment.'}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const displayPlans = plans;
 
   return (
     <section className="investment-plans">

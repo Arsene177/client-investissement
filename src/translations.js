@@ -1,9 +1,10 @@
 export const translations = {
     en: {
         nav: {
+            home: "Home",
             services: "Services",
             insights: "Insights",
-            about: "About Us",
+            about: "About",
             contact: "Contact",
             login: "Client Login"
         },
@@ -26,7 +27,10 @@ export const translations = {
             registerTitle: "Register New Account",
             registerBtn: "Register & Start Investing",
             fullName: "Full Name",
-            email: "Email Address"
+            email: "Email Address",
+            phone: "Phone Number",
+            country: "Country",
+            selectCountry: "Select your country"
         },
         dashboard: {
             welcome: "Welcome back",
@@ -143,6 +147,30 @@ export const translations = {
             ai: "AI-powered investment algorithms",
             risk: "Risk assessment & compliance monitoring"
         },
+        newsTicker: {
+            label: "Market News",
+            news1: "Bitcoin reaches new all-time high of $95,000 amid institutional adoption",
+            news2: "Global stock markets rally as inflation concerns ease",
+            news3: "Gold prices surge to $2,400/oz on geopolitical tensions",
+            news4: "S&P 500 closes at record high, tech sector leads gains",
+            news5: "Emerging markets see $50B in foreign investment inflows",
+            news6: "Cryptocurrency market cap surpasses $3 trillion milestone"
+        },
+        activityNotifications: {
+            investment: "just invested",
+            withdrawal: "just withdrew"
+        },
+        analytics: {
+            title: "Investment Analytics",
+            subtitle: "Real-time statistics and investment performance tracking",
+            totalInvestments: "Total Investments",
+            totalAmount: "Total Investment Amount",
+            totalGains: "Total Gains",
+            username: "Username",
+            hours: "Hours",
+            investmentAmount: "Investment Amount",
+            gainsReceived: "Gains Received"
+        },
         insights: {
             title: "Market Insights",
             subtitle: "Stay informed with our latest analysis and investment commentary.",
@@ -212,8 +240,9 @@ export const translations = {
     },
     fr: {
         nav: {
+            home: "Accueil",
             services: "Services",
-            insights: "Aperçus",
+            insights: "Analyses",
             about: "À Propos",
             contact: "Contact",
             login: "Connexion Client"
@@ -276,7 +305,7 @@ export const translations = {
                 totalPlans: "Portefeuilles Actifs",
                 globalAUM: "AUM Global Approx."
             },
-            save: "Télécharger et Initialiser le Portefeuille",
+            save: "Initialiser le Portefeuille",
             cancel: "Annuler"
         },
         hero: {
@@ -353,6 +382,30 @@ export const translations = {
             technical: "Analyse technique et fondamentale",
             ai: "Algorithmes d'investissement alimentés par l'IA",
             risk: "Évaluation des risques et surveillance de la conformité"
+        },
+        newsTicker: {
+            label: "Actualités du Marché",
+            news1: "Le Bitcoin atteint un nouveau sommet historique de 95 000 $ grâce à l'adoption institutionnelle",
+            news2: "Les marchés boursiers mondiaux se redressent alors que les inquiétudes concernant l'inflation s'apaisent",
+            news3: "Les prix de l'or grimpent à 2 400 $/oz en raison des tensions géopolitiques",
+            news4: "Le S&P 500 clôture à un niveau record, le secteur technologique mène les gains",
+            news5: "Les marchés émergents voient 50 milliards de dollars d'investissements étrangers",
+            news6: "La capitalisation du marché des cryptomonnaies dépasse les 3 000 milliards de dollars"
+        },
+        activityNotifications: {
+            investment: "vient d'investir",
+            withdrawal: "vient de retirer"
+        },
+        analytics: {
+            title: "Analyses des Investissements",
+            subtitle: "Statistiques en temps réel et suivi des performances d'investissement",
+            totalInvestments: "Nombre d'investissements",
+            totalAmount: "Total des investissements",
+            totalGains: "Gains totaux",
+            username: "Nom d'utilisateur",
+            hours: "Heures",
+            investmentAmount: "Montant investi",
+            gainsReceived: "Gains reçu"
         },
         insights: {
             title: "Aperçus du Marché",

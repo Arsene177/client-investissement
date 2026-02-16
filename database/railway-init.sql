@@ -21,16 +21,19 @@ CREATE TABLE IF NOT EXISTS countries (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('client', 'admin') DEFAULT 'client',
     full_name VARCHAR(100),
+    phone VARCHAR(20),
+    country_id INT,
     selected_country_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
+    FOREIGN KEY (country_id) REFERENCES countries(id),
     FOREIGN KEY (selected_country_id) REFERENCES countries(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

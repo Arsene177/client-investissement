@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TrendingUp, ChevronDown, Menu, X, Globe, User, LogOut } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
 import { useCountry } from '../CountryContext';
@@ -13,32 +14,7 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
     <nav className="navbar">
       <div className="container nav-content">
         <a href="/" className="logo">
-          <div className="logo-network">
-            <svg width="32" height="32" viewBox="0 0 100 100">
-              <defs>
-                <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#3B82F6" />
-                  <stop offset="100%" stopColor="#A855F7" />
-                </linearGradient>
-              </defs>
-              <circle cx="20" cy="30" r="8" fill="url(#logoGradient)" />
-              <circle cx="50" cy="20" r="8" fill="url(#logoGradient)" />
-              <circle cx="80" cy="30" r="8" fill="url(#logoGradient)" />
-              <circle cx="50" cy="80" r="8" fill="url(#logoGradient)" />
-              <circle cx="20" cy="70" r="8" fill="url(#logoGradient)" />
-              <circle cx="80" cy="70" r="8" fill="url(#logoGradient)" />
-              <line x1="20" y1="30" x2="50" y2="20" stroke="url(#logoGradient)" strokeWidth="3" />
-              <line x1="50" y1="20" x2="80" y2="30" stroke="url(#logoGradient)" strokeWidth="3" />
-              <line x1="20" y1="70" x2="50" y2="80" stroke="url(#logoGradient)" strokeWidth="3" />
-              <line x1="50" y1="80" x2="80" y2="70" stroke="url(#logoGradient)" strokeWidth="3" />
-              <line x1="20" y1="30" x2="20" y2="70" stroke="url(#logoGradient)" strokeWidth="3" />
-              <line x1="80" y1="30" x2="80" y2="70" stroke="url(#logoGradient)" strokeWidth="3" />
-            </svg>
-          </div>
-          <div className="logo-text">
-            <span className="logo-name">NEXUS</span>
-            <small>TRADING GROUP</small>
-          </div>
+          <img src="/assets/logo.jpg" alt="FUTUR GROUP INVEST" className="logo-image" />
         </a>
 
         <div className="nav-actions-desktop">
@@ -89,10 +65,11 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
 
           {!user && (
             <div className="nav-links">
-              <a href="#services">{t('nav.services')}</a>
-              <a href="#insights">{t('nav.insights')}</a>
-              <a href="#about">{t('nav.about')}</a>
-              <a href="#contact">{t('nav.contact')}</a>
+              <Link to="/#home">{t('nav.home')}</Link>
+              <Link to="/#services">{t('nav.services')}</Link>
+              <Link to="/analytics">{t('nav.insights')}</Link>
+              <Link to="/#about">{t('nav.about')}</Link>
+              <Link to="/#contact">{t('nav.contact')}</Link>
             </div>
           )}
 
@@ -166,13 +143,14 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
 
       <style>{`
                 .navbar {
-                    background: var(--primary);
-                    padding: 1rem 0;
+                    background: linear-gradient(135deg, #0A192F 0%, #1a2942 50%, #2d1b4e 100%);
+                    padding: 0.75rem 0;
                     position: sticky;
                     top: 0;
                     z-index: 1000;
                     border-bottom: 1px solid rgba(255,255,255,0.1);
                     color: var(--white);
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
                 }
 
                 .nav-content {
@@ -187,36 +165,25 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
                     align-items: center;
                     gap: 0.75rem;
                     color: var(--white);
+                    padding: 0.5rem 1rem;
+                    background: rgba(255, 255, 255, 0.95);
+                    border-radius: 12px;
+                    transition: var(--transition);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
                 }
 
-                .logo-network {
-                    display: flex;
-                    align-items: center;
+                .logo:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
                 }
 
-                .logo-text {
-                    display: flex;
-                    flex-direction: column;
-                    line-height: 1.1;
+                .logo-image {
+                    height: 55px;
+                    width: auto;
+                    object-fit: contain;
+                    display: block;
                 }
 
-                .logo-name {
-                    font-size: 1.4rem;
-                    font-weight: 800;
-                    letter-spacing: 1.5px;
-                    background: linear-gradient(135deg, #3B82F6 0%, #A855F7 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                }
-
-                .logo-text small {
-                    font-size: 0.6rem;
-                    text-transform: uppercase;
-                    opacity: 0.8;
-                    letter-spacing: 1px;
-                    color: var(--white);
-                }
 
                 .nav-actions-desktop {
                     display: flex;

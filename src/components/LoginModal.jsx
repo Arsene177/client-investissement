@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../LanguageContext';
-import { X, Lock, User, AlertCircle, CheckCircle, Mail, UserPlus } from 'lucide-react';
+import { useCountry } from '../CountryContext';
+import { X, Lock, User, AlertCircle, CheckCircle, Mail, UserPlus, Phone, Globe } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { countries } = useCountry();
   const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [countryId, setCountryId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -21,6 +27,8 @@ const LoginModal = ({ isOpen, onClose }) => {
     setPassword('');
     setEmail('');
     setFullName('');
+    setPhone('');
+    setCountryId('');
     setError('');
     setSuccess(false);
   };
@@ -37,7 +45,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     const endpoint = isRegister ? API_ENDPOINTS.REGISTER : API_ENDPOINTS.LOGIN;
     const body = isRegister
-      ? { username, email, password, full_name: fullName }
+      ? { username, email, password, full_name: fullName, phone, country_id: countryId }
       : { username, password };
 
     try {
@@ -58,9 +66,14 @@ const LoginModal = ({ isOpen, onClose }) => {
           }, 2000);
         } else {
           localStorage.setItem('user', JSON.stringify(data.user));
+          if (onLoginSuccess) onLoginSuccess(data.user);
           setTimeout(() => {
             onClose();
-            window.location.reload();
+            if (data.user.role === 'admin') {
+              navigate('/admin');
+            } else {
+              navigate('/dashboard');
+            }
           }, 1500);
         }
       } else {
@@ -117,6 +130,38 @@ const LoginModal = ({ isOpen, onClose }) => {
                     placeholder="john@example.com"
                     required
                   />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>{t('loginModal.phone')}</label>
+                <div className="input-wrapper">
+                  <Phone size={18} />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+237 6 XX XX XX XX"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>{t('loginModal.country')}</label>
+                <div className="input-wrapper">
+                  <Globe size={18} />
+                  <select
+                    value={countryId}
+                    onChange={(e) => setCountryId(e.target.value)}
+                    required
+                    style={{ paddingLeft: '2.8rem' }}
+                  >
+                    <option value="">{t('loginModal.selectCountry')}</option>
+                    {countries.map(country => (
+                      <option key={country.id} value={country.id}>
+                        {country.flag} {country.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </>
@@ -265,6 +310,23 @@ const LoginModal = ({ isOpen, onClose }) => {
         }
 
         .input-wrapper input:focus {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+          outline: none;
+        }
+
+        .input-wrapper select {
+          width: 100%;
+          padding: 0.75rem 1rem 0.75rem 2.8rem;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          transition: var(--transition);
+          background: var(--white);
+          cursor: pointer;
+        }
+
+        .input-wrapper select:focus {
           border-color: var(--accent);
           box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
           outline: none;

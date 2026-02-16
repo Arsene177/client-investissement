@@ -27,9 +27,12 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     role ENUM('client', 'admin') DEFAULT 'client',
     full_name VARCHAR(100),
+    phone VARCHAR(20),
+    country_id INT,
     selected_country_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
+    FOREIGN KEY (country_id) REFERENCES countries(id),
     FOREIGN KEY (selected_country_id) REFERENCES countries(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

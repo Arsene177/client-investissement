@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../LanguageContext';
 import {
     Plus,
@@ -26,8 +26,9 @@ const AdminDashboard = ({ user, onLogout }) => {
     const [editingPlan, setEditingPlan] = useState(null);
     const [message, setMessage] = useState({ type: '', text: '' });
     const [stats, setStats] = useState({ totalUsers: 0, totalPlans: 0, globalAUM: '$0.00' });
+    const [formError, setFormError] = useState('');
+    const modalRef = useRef(null);
 
-    // Form State
     const [formData, setFormData] = useState({
         name: '',
         roi: '',
@@ -41,7 +42,7 @@ const AdminDashboard = ({ user, onLogout }) => {
         display_order: 0,
         is_active: true,
         country_id: null,
-        country_code_input: 'GLOBAL' // Local state for the input
+        country_code_input: 'GLOBAL'
     });
 
     useEffect(() => {
@@ -70,6 +71,7 @@ const AdminDashboard = ({ user, onLogout }) => {
     };
 
     const handleOpenModal = (plan = null) => {
+        setFormError('');
         if (plan) {
             setEditingPlan(plan);
             setFormData({
@@ -110,6 +112,15 @@ const AdminDashboard = ({ user, onLogout }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError('');
+
+        // Basic validation
+        if (!formData.name || !formData.roi || !formData.min_deposit || !formData.settlement_time) {
+            setFormError('Please fill in all required fields (Name, ROI, Deposit, Settlement).');
+            if (modalRef.current) modalRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
         const method = editingPlan ? 'PUT' : 'POST';
         const url = editingPlan
             ? API_ENDPOINTS.PLAN_BY_ID(editingPlan.id)
@@ -122,14 +133,20 @@ const AdminDashboard = ({ user, onLogout }) => {
                 body: JSON.stringify(formData)
             });
 
+            const data = await response.json();
+
             if (response.ok) {
                 setMessage({ type: 'success', text: editingPlan ? 'Plan updated!' : 'Plan created!' });
                 setIsModalOpen(false);
                 fetchData();
                 setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+            } else {
+                setFormError(data.message || 'Operation failed. Please check your inputs.');
+                if (modalRef.current) modalRef.current.scrollTo({ top: 0, behavior: 'smooth' });
             }
         } catch (err) {
-            setMessage({ type: 'error', text: 'Operation failed' });
+            setFormError('Network error. Please try again.');
+            if (modalRef.current) modalRef.current.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
@@ -239,25 +256,58 @@ const AdminDashboard = ({ user, onLogout }) => {
 
             {isModalOpen && (
                 <div className="modal-overlay">
-                    <div className="modal-content admin-modal">
+                    <div className="modal-content admin-modal" ref={modalRef}>
                         <button className="close-btn" onClick={() => setIsModalOpen(false)}><X /></button>
                         <div className="modal-header">
                             <PlusCircle size={32} className="text-accent" />
                             <h3>{editingPlan ? t('admin.editPlan') : t('admin.addPlan')}</h3>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="admin-form">
+                        <form onSubmit={handleSubmit} className="admin-form" noValidate>
+                            {formError && (
+                                <div className="alert alert-error" style={{ marginBottom: '1.5rem', padding: '0.75rem' }}>
+                                    <AlertCircle size={16} />
+                                    <span>{formError}</span>
+                                </div>
+                            )}
                             <div className="form-grid">
-                                <div className="form-group">
+                                {/* Section 1: Investment Basics */}
+                                <div className="form-section-title full-width">Investment Basics</div>
+
+                                <div className="form-group full-width">
                                     <label>{t('admin.planName')}</label>
                                     <input
                                         type="text"
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                                         required
+                                        placeholder="e.g. Gold Standard Plan"
                                     />
                                 </div>
+
                                 <div className="form-group">
+                                    <label>{t('admin.roi')}</label>
+                                    <input
+                                        type="text"
+                                        value={formData.roi}
+                                        onChange={e => setFormData({ ...formData, roi: e.target.value })}
+                                        placeholder="e.g. 8-12%"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>{t('admin.minDeposit')}</label>
+                                    <input
+                                        type="text"
+                                        value={formData.min_deposit}
+                                        onChange={e => setFormData({ ...formData, min_deposit: e.target.value })}
+                                        placeholder="e.g. $5,000"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
                                     <label>{t('admin.country')}</label>
                                     <div className="code-input-wrapper">
                                         <input
@@ -287,26 +337,10 @@ const AdminDashboard = ({ user, onLogout }) => {
                                     </div>
                                     <p className="input-hint">Type ISO code (US, FR) or Phone code (1, 33)</p>
                                 </div>
-                                <div className="form-group">
-                                    <label>{t('admin.roi')}</label>
-                                    <input
-                                        type="text"
-                                        value={formData.roi}
-                                        onChange={e => setFormData({ ...formData, roi: e.target.value })}
-                                        placeholder="e.g. 8-12%"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>{t('admin.minDeposit')}</label>
-                                    <input
-                                        type="text"
-                                        value={formData.min_deposit}
-                                        onChange={e => setFormData({ ...formData, min_deposit: e.target.value })}
-                                        placeholder="e.g. $50,000"
-                                        required
-                                    />
-                                </div>
+
+                                {/* Section 2: Risk & Configuration */}
+                                <div className="form-section-title full-width" style={{ marginTop: '1rem' }}>Risk & Configuration</div>
+
                                 <div className="form-group">
                                     <label>{t('admin.risk')}</label>
                                     <select
@@ -319,25 +353,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                                         <option>Very High</option>
                                     </select>
                                 </div>
-                                <div className="form-group full-width">
-                                    <label>{t('admin.focus')}</label>
-                                    <textarea
-                                        value={formData.focus}
-                                        onChange={e => setFormData({ ...formData, focus: e.target.value })}
-                                        placeholder="Describe market focus..."
-                                        rows="2"
-                                    ></textarea>
-                                </div>
-                                <div className="form-group">
-                                    <label>Settlement Time</label>
-                                    <input
-                                        type="text"
-                                        value={formData.settlement_time}
-                                        onChange={e => setFormData({ ...formData, settlement_time: e.target.value })}
-                                        placeholder="e.g. 24H, 48H, 72H"
-                                        required
-                                    />
-                                </div>
+
                                 <div className="form-group">
                                     <label>Badge</label>
                                     <select
@@ -351,6 +367,18 @@ const AdminDashboard = ({ user, onLogout }) => {
                                         <option>EXCLUSIVE</option>
                                     </select>
                                 </div>
+
+                                <div className="form-group">
+                                    <label>Settlement Time</label>
+                                    <input
+                                        type="text"
+                                        value={formData.settlement_time}
+                                        onChange={e => setFormData({ ...formData, settlement_time: e.target.value })}
+                                        placeholder="e.g. 24H"
+                                        required
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <label>Display Order</label>
                                     <input
@@ -360,37 +388,50 @@ const AdminDashboard = ({ user, onLogout }) => {
                                         placeholder="0"
                                     />
                                 </div>
-                                <div className="form-group">
-                                    <label>Status</label>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
+
+                                <div className="form-group full-width">
+                                    <label>{t('admin.focus')}</label>
+                                    <textarea
+                                        value={formData.focus}
+                                        onChange={e => setFormData({ ...formData, focus: e.target.value })}
+                                        placeholder="Describe market focus..."
+                                        rows="2"
+                                    ></textarea>
+                                </div>
+
+                                {/* Section 3: Content */}
+                                <div className="form-section-title full-width" style={{ marginTop: '1rem' }}>Content</div>
+
+                                <div className="form-group full-width">
+                                    <label>Description (English)</label>
+                                    <textarea
+                                        value={formData.description_en}
+                                        onChange={e => setFormData({ ...formData, description_en: e.target.value })}
+                                        placeholder="English description..."
+                                        rows="3"
+                                    ></textarea>
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Description (French)</label>
+                                    <textarea
+                                        value={formData.description_fr}
+                                        onChange={e => setFormData({ ...formData, description_fr: e.target.value })}
+                                        placeholder="Description française..."
+                                        rows="3"
+                                    ></textarea>
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                                         <input
                                             type="checkbox"
                                             checked={formData.is_active}
                                             onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
                                             style={{ width: 'auto', margin: 0 }}
                                         />
-                                        <span style={{ fontSize: '0.9rem', color: formData.is_active ? '#10b981' : '#64748b' }}>
-                                            {formData.is_active ? 'Active' : 'Inactive'}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="form-group full-width">
-                                    <label>Description (English)</label>
-                                    <textarea
-                                        value={formData.description_en}
-                                        onChange={e => setFormData({ ...formData, description_en: e.target.value })}
-                                        placeholder="English description for this plan..."
-                                        rows="3"
-                                    ></textarea>
-                                </div>
-                                <div className="form-group full-width">
-                                    <label>Description (French)</label>
-                                    <textarea
-                                        value={formData.description_fr}
-                                        onChange={e => setFormData({ ...formData, description_fr: e.target.value })}
-                                        placeholder="Description française pour ce plan..."
-                                        rows="3"
-                                    ></textarea>
+                                        <span>Active Status</span>
+                                    </label>
                                 </div>
                             </div>
                             <div className="form-actions">
@@ -403,155 +444,164 @@ const AdminDashboard = ({ user, onLogout }) => {
             )}
 
             <style>{`
-        .admin-container {
-          background: #f1f5f9;
-          min-height: 100vh;
-        }
+                .admin-container {
+                    background: #f1f5f9;
+                    min-height: 100vh;
+                }
 
-        .admin-header {
-          background: #1e293b;
-          color: white;
-          padding: 1.5rem 0;
-        }
+                .admin-header {
+                    background: #1e293b;
+                    color: white;
+                    padding: 1.5rem 0;
+                }
 
-        .header-flex {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
+                .header-flex {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
 
-        .title-group {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
+                .title-group {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
 
-        .title-group h1 { font-size: 1.5rem; margin: 0; }
-        
-        .badge {
-          background: rgba(16, 185, 129, 0.2);
-          color: #10b981;
-          border: 1px solid rgba(16, 185, 129, 0.3);
-          padding: 2px 10px;
-          border-radius: 4px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
+                .title-group h1 { font-size: 1.5rem; margin: 0; }
+                
+                .badge {
+                    background: rgba(16, 185, 129, 0.2);
+                    color: #10b981;
+                    border: 1px solid rgba(16, 185, 129, 0.3);
+                    padding: 2px 10px;
+                    border-radius: 4px;
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                }
 
-        .btn-logout {
-          background: none;
-          border: 1px solid rgba(255,255,255,0.2);
-          color: rgba(255,255,255,0.7);
-          padding: 0.5rem 1rem;
-          border-radius: 6px;
-          cursor: pointer;
-        }
+                .btn-logout {
+                    background: none;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    color: rgba(255,255,255,0.7);
+                    padding: 0.5rem 1rem;
+                    border-radius: 6px;
+                    cursor: pointer;
+                }
 
-        .admin-main { padding-top: 2.5rem; }
+                .admin-main { padding-top: 2.5rem; }
 
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-          margin-bottom: 2.5rem;
-        }
+                .stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 1.5rem;
+                    margin-bottom: 2.5rem;
+                }
 
-        .stat-card {
-          background: white;
-          padding: 1.5rem;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-          display: flex;
-          align-items: center;
-          gap: 1.25rem;
-          border-left: 4px solid #cbd5e1;
-        }
+                .stat-card {
+                    background: white;
+                    padding: 1.5rem;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+                    display: flex;
+                    align-items: center;
+                    gap: 1.25rem;
+                    border-left: 4px solid #cbd5e1;
+                }
 
-        .stat-icon {
-          width: 48px;
-          height: 48px;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-        }
+                .stat-icon {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                }
 
-        .bg-blue { background: #3b82f6; }
-        .bg-emerald { background: #10b981; }
-        .bg-indigo { background: #6366f1; }
-        
-        .border-blue { border-left-color: #3b82f6; }
-        .border-emerald { border-left-color: #10b981; }
-        .border-indigo { border-left-color: #6366f1; }
+                .bg-blue { background: #3b82f6; }
+                .bg-emerald { background: #10b981; }
+                .bg-indigo { background: #6366f1; }
+                
+                .border-blue { border-left-color: #3b82f6; }
+                .border-emerald { border-left-color: #10b981; }
+                .border-indigo { border-left-color: #6366f1; }
 
-        .stat-info span { font-size: 0.8rem; color: #64748b; font-weight: 600; }
-        .stat-info h3 { font-size: 1.5rem; margin: 0.1rem 0; color: #1e293b; }
+                .stat-info span { font-size: 0.8rem; color: #64748b; font-weight: 600; }
+                .stat-info h3 { font-size: 1.5rem; margin: 0.1rem 0; color: #1e293b; }
 
-        .management-section { background: white; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .card-header { padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        .card-header h2 { font-size: 1.25rem; display: flex; align-items: center; gap: 0.75rem; color: #1e293b; }
+                .management-section { background: white; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+                .card-header { padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+                .card-header h2 { font-size: 1.25rem; display: flex; align-items: center; gap: 0.75rem; color: #1e293b; }
 
-        .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th { background: #f8fafc; text-align: left; padding: 1.25rem 2rem; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; }
-        .admin-table td { padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; color: #1e293b; }
-        
-        .country-tag { background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; width: fit-content; }
-        
-        .risk-tag { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
-        .risk-tag.low { background: #dcfce7; color: #166534; }
-        .risk-tag.moderate { background: #fef9c3; color: #854d0e; }
-        .risk-tag.high { background: #fee2e2; color: #991b1b; }
+                .admin-table { width: 100%; border-collapse: collapse; }
+                .admin-table th { background: #f8fafc; text-align: left; padding: 1.25rem 2rem; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; }
+                .admin-table td { padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; color: #1e293b; }
+                
+                .country-tag { background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; width: fit-content; }
+                
+                .risk-tag { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+                .risk-tag.low { background: #dcfce7; color: #166534; }
+                .risk-tag.moderate { background: #fef9c3; color: #854d0e; }
+                .risk-tag.high { background: #fee2e2; color: #991b1b; }
 
-        .actions-cell { display: flex; gap: 0.75rem; }
-        .icon-btn { border: none; background: #f1f5f9; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s; }
-        .icon-btn.edit:hover { background: #dbeafe; color: #2563eb; }
-        .icon-btn.delete:hover { background: #fee2e2; color: #dc2626; }
+                .actions-cell { display: flex; gap: 0.75rem; }
+                .icon-btn { border: none; background: #f1f5f9; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s; }
+                .icon-btn.edit:hover { background: #dbeafe; color: #2563eb; }
+                .icon-btn.delete:hover { background: #fee2e2; color: #dc2626; }
 
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
-        .admin-modal { max-width: 600px; padding: 2.5rem; border-radius: 24px; }
-        
-        .admin-form { margin-top: 2rem; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        .full-width { grid-column: span 2; }
-        
-        .code-input-wrapper {
-            position: relative;
-        }
+                /* Modal Styles */
+                .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+                .admin-modal { background: white; max-width: 600px; padding: 2.5rem; border-radius: 24px; position: relative; max-height: 90vh; overflow-y: auto; }
+                
+                .admin-form { margin-top: 2rem; }
+                .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+                .full-width { grid-column: span 2; }
+                
+                .form-section-title {
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    color: #1e293b;
+                    border-bottom: 2px solid #e2e8f0;
+                    padding-bottom: 0.5rem;
+                    margin-bottom: 1rem;
+                }
 
-        .resolved-country {
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--accent);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+                .code-input-wrapper {
+                    position: relative;
+                }
 
-        .input-hint {
-            font-size: 0.7rem;
-            color: #94a3b8;
-            margin-top: 0.25rem;
-        }
+                .resolved-country {
+                    margin-top: 0.5rem;
+                    font-size: 0.85rem;
+                    color: var(--accent);
+                    font-weight: 700;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
 
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
-        
-        .form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2.5rem; }
+                .input-hint {
+                    font-size: 0.7rem;
+                    color: #94a3b8;
+                    margin-top: 0.25rem;
+                }
 
-        .alert { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 2rem; font-weight: 500; }
-        .alert-success { background: #ecfdf5; color: #059669; border: 1px solid #10b981; }
-        .alert-error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+                .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
+                .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
+                
+                .form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2.5rem; }
 
-        @media (max-width: 768px) {
-          .stats-grid { grid-template-columns: 1fr; }
-          .form-grid { grid-template-columns: 1fr; }
-          .full-width { grid-column: auto; }
-        }
-      `}</style>
+                .alert { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 2rem; font-weight: 500; }
+                .alert-success { background: #ecfdf5; color: #059669; border: 1px solid #10b981; }
+                .alert-error { background: #fef2f2; color: #dc2626; border: 1px solid #f87171; }
+
+                @media (max-width: 768px) {
+                  .stats-grid { grid-template-columns: 1fr; }
+                  .form-grid { grid-template-columns: 1fr; }
+                  .full-width { grid-column: auto; }
+                }
+            `}</style>
         </div>
     );
 };
