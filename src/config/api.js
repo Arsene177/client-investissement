@@ -1,9 +1,10 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const API_BASE_URL = `${SUPABASE_URL}/functions/v1`;
 
 export const API_ENDPOINTS = {
     // Auth endpoints
-    LOGIN: `${API_BASE_URL}/api/login`,
-    REGISTER: `${API_BASE_URL}/api/register`,
+    LOGIN: `${API_BASE_URL}/auth/login`,
+    REGISTER: `${API_BASE_URL}/auth/register`,
 
     // Country endpoints
     COUNTRIES: `${API_BASE_URL}/api/countries`,
