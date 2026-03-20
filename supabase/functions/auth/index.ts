@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
         );
       }
 
-      const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts');
+      const bcrypt = await import('npm:bcryptjs');
       const isValid = await bcrypt.compare(password, user.password);
 
       if (!isValid) {
@@ -63,6 +63,16 @@ Deno.serve(async (req: Request) => {
           JSON.stringify({ message: 'Invalid credentials' }),
           {
             status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      if (user.is_suspended) {
+        return new Response(
+          JSON.stringify({ message: 'Votre compte est suspendu. Veuillez contacter l\'administration.' }),
+          {
+            status: 403,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
         );
@@ -124,8 +134,8 @@ Deno.serve(async (req: Request) => {
         }
       }
 
-      const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts');
-      const hashedPassword = await bcrypt.hash(password);
+      const bcrypt = await import('npm:bcryptjs');
+      const hashedPassword = await bcrypt.hashSync(password, 10);
 
       const { data: newUser, error } = await supabase
         .from('users')

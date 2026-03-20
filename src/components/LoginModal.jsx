@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../LanguageContext';
 import { useCountry } from '../CountryContext';
 import { X, Lock, User, AlertCircle, CheckCircle, Mail, UserPlus, Phone, Globe } from 'lucide-react';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, getHeaders } from '../config/api';
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const { t } = useLanguage();
@@ -51,7 +51,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify(body)
       });
 
@@ -101,7 +101,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
         </div>
 
         {error && <div className="error-msg"><AlertCircle size={18} /> {error}</div>}
-        {success && <div className="success-msg"><CheckCircle size={18} /> {isRegister ? "Registration Successful! Please login." : t('loginModal.success')}</div>}
+        {success && <div className="success-msg"><CheckCircle size={18} /> {isRegister ? t('loginModal.registerSuccess') : t('loginModal.success')}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           {isRegister && (
@@ -156,7 +156,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                     style={{ paddingLeft: '2.8rem' }}
                   >
                     <option value="">{t('loginModal.selectCountry')}</option>
-                    {countries.map(country => (
+                    {Array.isArray(countries) && countries.map(country => (
                       <option key={country.id} value={country.id}>
                         {country.flag} {country.name}
                       </option>
@@ -396,6 +396,31 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
           align-items: center;
           gap: 0.5rem;
           margin-bottom: 1.25rem;
+        }
+
+        @media (max-width: 580px) {
+          .modal-content {
+            padding: 1.5rem;
+            max-width: 95%;
+            margin: 0 10px;
+          }
+
+          .modal-header h2 {
+            font-size: 1.25rem;
+          }
+
+          .input-wrapper input, .input-wrapper select {
+            padding: 0.7rem 0.8rem 0.7rem 2.5rem;
+            font-size: 0.9rem;
+          }
+
+          .input-wrapper svg {
+            left: 0.8rem;
+          }
+           
+          .login-submit-btn {
+            padding: 0.75rem;
+          }
         }
 
         @keyframes fadeIn {

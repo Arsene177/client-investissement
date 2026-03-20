@@ -13,12 +13,12 @@ const AnalyticsPage = () => {
   });
 
   const initialInvestments = [
-    { user: '*******35', hours: 'x1.34', amount: 34261.09, gains: 45909.85 },
-    { user: '*******61', hours: 'x1.56', amount: 23297.55, gains: 36344.16 },
-    { user: '*******61', hours: 'x1.98', amount: 22840.73, gains: 45224.63 },
-    { user: '*******25', hours: 'x5.11', amount: 14797.31, gains: 75614.22 },
-    { user: '*******35', hours: 'x1.5', amount: 13054.99, gains: 19582.47 },
-    { user: '*******51', hours: 'x0', amount: 11371.68, gains: 0 },
+    { user: '*******35', hours: 'x1.34', amount: 342.09, gains: 459.85 },
+    { user: '*******61', hours: 'x1.56', amount: 2302.55, gains: 3603.16 },
+    { user: '*******61', hours: 'x1.98', amount: 228.73, gains: 452.63 },
+    { user: '*******25', hours: 'x5.11', amount: 147.31, gains: 756.22 },
+    { user: '*******35', hours: 'x1.5', amount: 1309.99, gains: 1958.47 },
+    { user: '*******51', hours: 'x0', amount: 113.68, gains: 0 },
     { user: '*******25', hours: 'x0', amount: 5598.98, gains: 0 },
     { user: '*******69', hours: 'x0', amount: 5492, gains: 0 }
   ];

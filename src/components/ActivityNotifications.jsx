@@ -8,44 +8,80 @@ const ActivityNotifications = () => {
   const [nextId, setNextId] = useState(1);
 
   const activities = [
-    { type: 'withdrawal', amount: 5000, user: '*******12' },
-    { type: 'investment', amount: 10000, user: '*******45' },
-    { type: 'withdrawal', amount: 2500, user: '*******78' },
-    { type: 'investment', amount: 15000, user: '*******23' },
-    { type: 'investment', amount: 7500, user: '*******56' },
-    { type: 'withdrawal', amount: 3000, user: '*******89' },
-    { type: 'investment', amount: 20000, user: '*******34' },
-    { type: 'withdrawal', amount: 4500, user: '*******67' },
-    { type: 'investment', amount: 12000, user: '*******91' },
-    { type: 'withdrawal', amount: 8000, user: '*******25' },
-    { type: 'investment', amount: 18000, user: '*******53' },
-    { type: 'withdrawal', amount: 6500, user: '*******72' }
+    { type: 'investment', amount: 15000, user: 'Sophia Garcia' },
+    { type: 'withdrawal', amount: 5000, user: 'Liam Johnson' },
+    { type: 'investment', amount: 10000, user: 'Emma Wilson' },
+    { type: 'withdrawal', amount: 2500, user: 'Noah Davis' },
+    { type: 'investment', amount: 7500, user: 'Ava Miller' },
+    { type: 'withdrawal', amount: 3000, user: 'Olivia Brown' },
+    { type: 'investment', amount: 20000, user: 'James Martinez' },
+    { type: 'withdrawal', amount: 4500, user: 'Isabella Rodriguez' },
+    { type: 'investment', amount: 12000, user: 'Benjamin Jones' }
   ];
 
   useEffect(() => {
-    const showNotification = () => {
-      const randomActivity = activities[Math.floor(Math.random() * activities.length)];
-      const newNotification = {
-        id: nextId,
-        ...randomActivity
-      };
-
-      setNotifications(prev => [...prev, newNotification]);
-      setNextId(prev => prev + 1);
-
-      // Auto-remove after 5 seconds
-      setTimeout(() => {
-        setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
-      }, 5000);
+    const generateRandomAmount = () => {
+      // Starting from $50, weighted towards smaller amounts but can go up to $25k
+      const base = 50;
+      const rand = Math.random();
+      if (rand > 0.95) return base + Math.floor(Math.random() * 24950); // High: $50-25000
+      if (rand > 0.8) return base + Math.floor(Math.random() * 4950);  // Medium: $50-5000
+      return base + Math.floor(Math.random() * 950);                   // Low: $50-1000
     };
 
-    // Show first notification after 2 seconds
-    const initialTimeout = setTimeout(showNotification, 2000);
+    const generateRandomUser = () => {
+      const names = [
+        'Emma Wilson', 'Liam Johnson', 'Olivia Brown', 'Noah Davis', 'Ava Miller',
+        'Sophia Garcia', 'James Martinez', 'Isabella Rodriguez', 'Benjamin Jones',
+        'Mia Hernandez', 'Lucas Walker', 'Charlotte Wright', 'Alexander Hill',
+        'Amelia Scott', 'Elijah Green', 'Abigail Adams', 'Daniel Nelson',
+        'Harper Baker', 'Matthew Lee', 'Evelyn Taylor'
+      ];
+      
+      const name = names[Math.floor(Math.random() * names.length)];
+      if (Math.random() > 0.5) return name; // 50% chance full name
 
-    // Then show notifications every 30 seconds
+      // 50% chance masked name (e.g., "Emma W***")
+      const parts = name.split(' ');
+      if (parts.length > 1) {
+        return `${parts[0]} ${parts[1].charAt(0)}***`;
+      }
+      return `${name.substring(0, 3)}***`;
+    };
+
+    const showNotification = () => {
+      // Clear any existing notifications first to ensure only 1 is visible
+      setNotifications([]);
+
+      const types = ['investment', 'withdrawal', 'investment']; // Weighted towards investments
+      const type = types[Math.floor(Math.random() * types.length)];
+
+      const newNotification = {
+        id: nextId,
+        type,
+        amount: generateRandomAmount(),
+        user: generateRandomUser()
+      };
+
+      // Small delay to trigger animation if clearing previous one
+      setTimeout(() => {
+        setNotifications([newNotification]);
+        setNextId(prev => prev + 1);
+      }, 100);
+
+      // Auto-remove after 8 seconds
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
+      }, 8100);
+    };
+
+    // Show first notification after 60 seconds
+    const initialTimeout = setTimeout(showNotification, 60000);
+
+    // Then show notifications every 60 seconds
     const interval = setInterval(() => {
       showNotification();
-    }, 30000);
+    }, 60000);
 
     return () => {
       clearTimeout(initialTimeout);

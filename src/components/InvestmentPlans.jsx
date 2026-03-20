@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Flag, DollarSign, Clock, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../LanguageContext';
 import { useCountry } from '../CountryContext';
-import { API_ENDPOINTS } from '../config/api';
+import { API_ENDPOINTS, getHeaders } from '../config/api';
 
-const InvestmentPlans = () => {
+const InvestmentPlans = ({ onLoginClick }) => {
   const { t, language } = useLanguage();
   const { selectedCountry } = useCountry();
   const [plans, setPlans] = useState([]);
@@ -19,11 +19,24 @@ const InvestmentPlans = () => {
   const fetchPlans = async () => {
     setLoading(true);
     try {
-      const response = await fetch(API_ENDPOINTS.PLANS_BY_COUNTRY(selectedCountry.id));
+      const response = await fetch(API_ENDPOINTS.ALL_PLANS, {
+        headers: getHeaders()
+      });
       const data = await response.json();
-      // Filter active plans and sort by display_order
-      const activePlans = data.filter(p => p.is_active).sort((a, b) => a.display_order - b.display_order);
-      setPlans(activePlans);
+
+      if (!Array.isArray(data)) {
+        console.error('Data fetched is not an array:', data);
+        setPlans([]);
+        return;
+      }
+
+      // Filter active plans that match selected country OR are GLOBAL (null country_id)
+      // Using == for type-safe comparison (string vs number)
+      const filteredPlans = data.filter(p =>
+        p.is_active && (p.country_id == selectedCountry?.id || p.country_id === null || !p.country_id)
+      ).sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+
+      setPlans(filteredPlans);
     } catch (error) {
       console.error('Failed to fetch plans:', error);
       setPlans([]);
@@ -82,8 +95,9 @@ const InvestmentPlans = () => {
         ) : (
           <div className="plans-grid">
             {displayPlans.map((plan, index) => {
-              const gradient = plan.gradient || getGradientForPlan(plan.name);
-              const borderColor = plan.borderColor || getBorderColor(plan.name);
+              const name = language === 'fr' ? (plan.name_fr || plan.name) : (plan.name_en || plan.name);
+              const gradient = plan.gradient || getGradientForPlan(name);
+              const borderColor = plan.borderColor || getBorderColor(name);
               const description = language === 'fr' ? (plan.description_fr || plan.description_en) : (plan.description_en || plan.description_fr);
 
               return (
@@ -94,7 +108,7 @@ const InvestmentPlans = () => {
 
                   <div className="plan-header">
                     <Flag size={28} style={{ color: borderColor }} />
-                    <h3>{plan.name}</h3>
+                    <h3>{name}</h3>
                   </div>
 
                   <p className="plan-description">{description}</p>
@@ -123,7 +137,7 @@ const InvestmentPlans = () => {
                     </div>
                   </div>
 
-                  <button className="btn btn-plan">
+                  <button className="btn btn-plan" onClick={onLoginClick}>
                     {t('investmentPlans.startTrading')} <ArrowRight size={18} />
                   </button>
                 </div>
@@ -133,7 +147,7 @@ const InvestmentPlans = () => {
         )}
 
         <div className="cta-container">
-          <button className="btn btn-subscribe">{t('investmentPlans.subscribe')}</button>
+          <button className="btn btn-subscribe" onClick={onLoginClick}>{t('investmentPlans.subscribe')}</button>
         </div>
       </div>
 
@@ -316,24 +330,48 @@ const InvestmentPlans = () => {
         }
 
         @media (max-width: 768px) {
+          .investment-plans {
+            padding: 4rem 0;
+          }
+
           .section-header h2 {
             font-size: 2.25rem;
           }
 
           .plans-grid {
             grid-template-columns: 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
+            padding: 0 0.5rem;
+          }
+
+          .plan-card {
+            padding: 2rem 1.5rem;
+          }
+
+          .plan-header h3 {
+            font-size: 1.5rem;
           }
 
           .plan-stats {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 0.75rem;
+            padding: 1rem;
           }
 
           .stat-item {
             flex-direction: row;
             justify-content: flex-start;
             text-align: left;
+            gap: 1rem;
+          }
+
+          .stat-value {
+            font-size: 1rem;
+          }
+
+          .btn-subscribe {
+            width: 90%;
+            padding: 1rem 2rem;
           }
         }
       `}</style>

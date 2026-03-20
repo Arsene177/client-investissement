@@ -82,7 +82,7 @@ The frontend has been updated to use Supabase Edge Functions:
 
 Already configured in `.env`:
 ```
-VITE_SUPABASE_URL=https://gwaucancovxtvwyesvqg.supabase.co
+VITE_SUPABASE_URL=https://gwjmlwmpbmmzyoiweedy.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGci...
 ```
 

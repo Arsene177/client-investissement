@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { API_ENDPOINTS } from './config/api';
+import { API_ENDPOINTS, getHeaders } from './config/api';
 
 const CountryContext = createContext();
 
@@ -26,12 +26,16 @@ export const CountryProvider = ({ children }) => {
         const defaultCountryCode = detectCountry();
 
         // Fetch countries and set default
-        fetch(API_ENDPOINTS.COUNTRIES)
+        fetch(API_ENDPOINTS.COUNTRIES, { headers: getHeaders() })
             .then(res => res.json())
             .then(data => {
-                setCountries(data);
-                const defaultCountry = data.find(c => c.code === defaultCountryCode) || data.find(c => c.code === 'FR');
-                setSelectedCountry(defaultCountry);
+                if (Array.isArray(data)) {
+                    setCountries(data);
+                    const defaultCountry = data.find(c => c.code === defaultCountryCode) || data.find(c => c.code === 'FR') || data[0];
+                    setSelectedCountry(defaultCountry);
+                } else {
+                    console.error('Invalid countries data format:', data);
+                }
             })
             .catch(err => console.error('Failed to fetch countries:', err));
     }, []);

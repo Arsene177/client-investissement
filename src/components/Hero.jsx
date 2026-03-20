@@ -142,21 +142,30 @@ const Hero = ({ onLoginClick }) => {
 
         @media (max-width: 768px) {
           .hero { 
-            padding: 8rem 0 10rem; 
+            padding: 6rem 0 8rem; 
           }
           
           .gradient-text { 
-            font-size: 2.5rem; 
+            font-size: 2.25rem; 
+            padding: 0 0.5rem;
           }
           
           .hero-subtitle { 
-            font-size: 1.1rem;
-            padding: 0 1rem;
+            font-size: 1rem;
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
           }
 
           .btn-hero {
-            padding: 1rem 2rem;
+            padding: 0.9rem 2rem;
             font-size: 1rem;
+            width: 90%;
+            max-width: 300px;
+          }
+
+          .guarantee-badge {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
           }
         }
       `}</style>

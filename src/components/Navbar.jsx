@@ -11,146 +11,219 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="navbar">
-      <div className="container nav-content">
-        <a href="/" className="logo">
-          <img src="/assets/logo.jpg" alt="FUTUR GROUP INVEST" className="logo-image" />
-        </a>
+    <nav className="navbar-wrapper">
+      <div className="navbar">
+        <div className="container nav-content">
+          <a href="/" className="logo">
+            <img src="/assets/logo.jpg" alt="FUTUR GROUP INVEST" className="logo-image" />
+          </a>
 
-        <div className="nav-actions-desktop">
-          {/* Country Selector */}
-          {selectedCountry && (
-            <div className="country-selector">
+          <div className="nav-actions-desktop">
+            {/* Country Selector */}
+            {selectedCountry && (
+              <div className="country-selector">
+                <button
+                  className="country-btn"
+                  onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                >
+                  <span className="country-flag">{selectedCountry.flag}</span>
+                  <span className="country-name">{selectedCountry.name}</span>
+                  <ChevronDown size={14} />
+                </button>
+
+                {isCountryDropdownOpen && (
+                  <div className="country-dropdown">
+                    {countries.map(country => (
+                      <button
+                        key={country.id}
+                        className={`country-option ${selectedCountry.id === country.id ? 'active' : ''}`}
+                        onClick={() => {
+                          changeCountry(country);
+                          setIsCountryDropdownOpen(false);
+                        }}
+                      >
+                        <span className="country-flag">{country.flag}</span>
+                        <span>{country.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="lang-switcher">
+              <Globe size={14} />
               <button
-                className="country-btn"
-                onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-              >
-                <span className="country-flag">{selectedCountry.flag}</span>
-                <span className="country-name">{selectedCountry.name}</span>
-                <ChevronDown size={14} />
-              </button>
-
-              {isCountryDropdownOpen && (
-                <div className="country-dropdown">
-                  {countries.map(country => (
-                    <button
-                      key={country.id}
-                      className={`country-option ${selectedCountry.id === country.id ? 'active' : ''}`}
-                      onClick={() => {
-                        changeCountry(country);
-                        setIsCountryDropdownOpen(false);
-                      }}
-                    >
-                      <span className="country-flag">{country.flag}</span>
-                      <span>{country.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+                className={lang === 'en' ? 'active' : ''}
+                onClick={() => switchLanguage('en')}
+              >EN</button>
+              <span className="separator">|</span>
+              <button
+                className={lang === 'fr' ? 'active' : ''}
+                onClick={() => switchLanguage('fr')}
+              >FR</button>
             </div>
-          )}
 
-          <div className="lang-switcher">
-            <Globe size={14} />
+            {!user && (
+              <div className="nav-links">
+                <Link to="/#home">{t('nav.home')}</Link>
+                <Link to="/#services">{t('nav.services')}</Link>
+                <Link to="/analytics">{t('nav.insights')}</Link>
+                <Link to="/#about">{t('nav.about')}</Link>
+                <Link to="/#contact">{t('nav.contact')}</Link>
+              </div>
+            )}
+
+            {user ? (
+              <div className="user-nav">
+                <div className="user-profile">
+                  <div className="avatar">{user.full_name.charAt(0)}</div>
+                  <span>{user.full_name}</span>
+                </div>
+                <button className="btn-logout" onClick={onLogout} title={t('dashboard.logout')}>
+                  <LogOut size={18} />
+                </button>
+              </div>
+            ) : (
+              <button className="btn btn-primary login-btn" onClick={onLoginClick}>
+                <User size={16} />
+                {t('nav.login')}
+              </button>
+            )}
+          </div>
+
+          <button
+            className="mobile-toggle"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
+
+        {isMobileMenuOpen && (
+          <div className="mobile-menu">
+            {!user ? (
+              <>
+                <Link to="/#home" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.home')}</Link>
+                <Link to="/#services" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.services')}</Link>
+                <Link to="/analytics" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.insights')}</Link>
+                <Link to="/#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.about')}</Link>
+                <Link to="/#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</Link>
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', marginTop: '1rem' }}
+                  onClick={() => { onLoginClick(); setIsMobileMenuOpen(false); }}
+                >
+                  {t('nav.login')}
+                </button>
+              </>
+            ) : (
+              <div className="mobile-user-actions">
+                <p>Logged in as: <strong>{user.full_name}</strong></p>
+                <button
+                  className="btn btn-outline-light"
+                  style={{ width: '100%', marginTop: '1rem', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
+                  onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
+                >
+                  {t('dashboard.logout')}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Mobile-only Language Bar below the navbar */}
+      <div className="mobile-lang-bar">
+        <div className="container lang-bar-content">
+          <div className="lang-switcher-mobile">
             <button
               className={lang === 'en' ? 'active' : ''}
               onClick={() => switchLanguage('en')}
-            >EN</button>
-            <span className="separator">|</span>
+            >
+              <span className="lang-code">EN</span> English
+            </button>
+            <div className="v-separator"></div>
             <button
               className={lang === 'fr' ? 'active' : ''}
               onClick={() => switchLanguage('fr')}
-            >FR</button>
-          </div>
-
-          {!user && (
-            <div className="nav-links">
-              <Link to="/#home">{t('nav.home')}</Link>
-              <Link to="/#services">{t('nav.services')}</Link>
-              <Link to="/analytics">{t('nav.insights')}</Link>
-              <Link to="/#about">{t('nav.about')}</Link>
-              <Link to="/#contact">{t('nav.contact')}</Link>
-            </div>
-          )}
-
-          {user ? (
-            <div className="user-nav">
-              <div className="user-profile">
-                <div className="avatar">{user.full_name.charAt(0)}</div>
-                <span>{user.full_name}</span>
-              </div>
-              <button className="btn-logout" onClick={onLogout} title={t('dashboard.logout')}>
-                <LogOut size={18} />
-              </button>
-            </div>
-          ) : (
-            <button className="btn btn-primary login-btn" onClick={onLoginClick}>
-              <User size={16} />
-              {t('nav.login')}
+            >
+              <span className="lang-code">FR</span> Français
             </button>
-          )}
+          </div>
         </div>
-
-        <button
-          className="mobile-toggle"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X /> : <Menu />}
-        </button>
       </div>
 
-      {isMobileMenuOpen && (
-        <div className="mobile-menu">
-          <div className="mobile-lang-switcher">
-            <button
-              className={lang === 'en' ? 'active' : ''}
-              onClick={() => { switchLanguage('en'); setIsMobileMenuOpen(false); }}
-            >English</button>
-            <button
-              className={lang === 'fr' ? 'active' : ''}
-              onClick={() => { switchLanguage('fr'); setIsMobileMenuOpen(false); }}
-            >Français</button>
-          </div>
-
-          {!user ? (
-            <>
-              <a href="#services" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.services')}</a>
-              <a href="#insights" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.insights')}</a>
-              <a href="#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.about')}</a>
-              <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</a>
-              <button
-                className="btn btn-primary"
-                style={{ width: '100%', marginTop: '1rem' }}
-                onClick={() => { onLoginClick(); setIsMobileMenuOpen(false); }}
-              >
-                {t('nav.login')}
-              </button>
-            </>
-          ) : (
-            <div className="mobile-user-actions">
-              <p>Logged in as: <strong>{user.full_name}</strong></p>
-              <button
-                className="btn btn-outline-light"
-                style={{ width: '100%', marginTop: '1rem', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
-                onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
-              >
-                {t('dashboard.logout')}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
 
       <style>{`
-                .navbar {
-                    background: linear-gradient(135deg, #0A192F 0%, #1a2942 50%, #2d1b4e 100%);
-                    padding: 0.75rem 0;
+                .navbar-wrapper {
                     position: sticky;
                     top: 0;
                     z-index: 1000;
+                    width: 100%;
+                }
+
+                .navbar {
+                    background: linear-gradient(135deg, #0A192F 0%, #1a2942 50%, #2d1b4e 100%);
+                    padding: 0.75rem 0;
                     border-bottom: 1px solid rgba(255,255,255,0.1);
                     color: var(--white);
                     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                }
+
+                /* Mobile Language Bar */
+                .mobile-lang-bar {
+                    background: #1e293b;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                    padding: 0.5rem 0;
+                    display: none; /* Hidden on desktop */
+                }
+
+                .lang-bar-content {
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .lang-switcher-mobile {
+                    display: flex;
+                    align-items: center;
+                    gap: 0;
+                    background: rgba(255,255,255,0.05);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    border: 1px solid rgba(255,255,255,0.1);
+                }
+
+                .lang-switcher-mobile button {
+                    background: none;
+                    border: none;
+                    color: rgba(255,255,255,0.6);
+                    padding: 0.5rem 1rem;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.2s;
+                }
+
+                .lang-switcher-mobile button.active {
+                    background: var(--accent-gradient);
+                    color: white;
+                }
+
+                .lang-code {
+                    font-size: 0.7rem;
+                    background: rgba(255,255,255,0.1);
+                    padding: 1px 4px;
+                    border-radius: 3px;
+                }
+
+                .v-separator {
+                    width: 1px;
+                    height: 20px;
+                    background: rgba(255,255,255,0.1);
                 }
 
                 .nav-content {
@@ -183,7 +256,6 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
                     object-fit: contain;
                     display: block;
                 }
-
 
                 .nav-actions-desktop {
                     display: flex;
@@ -374,6 +446,23 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
                     border-top: 1px solid rgba(255,255,255,0.1);
                 }
 
+                .mobile-menu a {
+                    text-decoration: none;
+                    color: var(--white);
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    padding: 0.5rem 0;
+                    display: block;
+                    transition: var(--transition);
+                    opacity: 0.8;
+                }
+
+                .mobile-menu a:hover {
+                    opacity: 1;
+                    color: #F59E0B;
+                    padding-left: 0.5rem;
+                }
+
                 .mobile-user-actions p {
                     margin-bottom: 0.5rem;
                     font-size: 0.9rem;
@@ -382,8 +471,11 @@ const Navbar = ({ user, onLogout, onLoginClick }) => {
                 @media (max-width: 992px) {
                     .nav-actions-desktop { display: none; }
                     .mobile-toggle { display: block; }
+                    .mobile-lang-bar { display: block; }
+                    .logo-image { height: 45px; }
                 }
             `}</style>
+
     </nav>
   );
 };

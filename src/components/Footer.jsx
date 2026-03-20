@@ -20,7 +20,7 @@ const Footer = () => {
           </div>
           <div className="contact-item">
             <Mail size={18} />
-            <span>info@aureuswealth.com</span>
+            <span>info@futurgroupinvest.com</span>
           </div>
         </div>
 

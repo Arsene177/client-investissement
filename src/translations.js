@@ -20,6 +20,7 @@ export const translations = {
             errorUsername: "Username already exists",
             errorServer: "Connection to auth server failed",
             success: "Welcome back!",
+            registerSuccess: "Registration Successful! Please login.",
             noAccount: "Don't have an account?",
             haveAccount: "Already have an account?",
             signupLink: "Create an Account",
@@ -70,7 +71,23 @@ export const translations = {
                 globalAUM: "Approx. Global AUM"
             },
             save: "Upload and Initialize Portfolio",
-            cancel: "Discard"
+            cancel: "Discard",
+            manageUsers: "Manage Platform Clients",
+            active: "Active",
+            suspended: "Suspended",
+            user: "User",
+            email: "Email",
+            country: "Country",
+            plan: "Plan",
+            status: "Status",
+            allPlans: "All Plans",
+            loadingUsers: "Loading clients...",
+            noUsersFound: "No clients found",
+            messageAll: "Message All Filtered",
+            messageSentTo: "Message sent to {count} users",
+            subject: "Subject",
+            messageContent: "Message Content",
+            send: "Send"
         },
         hero: {
             title: "Secure Your Financial Future",
@@ -259,6 +276,7 @@ export const translations = {
             errorUsername: "Le nom d'utilisateur existe déjà",
             errorServer: "La connexion au serveur d'authentification a échoué",
             success: "Bon retour !",
+            registerSuccess: "Inscription réussie ! Veuillez vous connecter.",
             noAccount: "Vous n'avez pas de compte ?",
             haveAccount: "Vous avez déjà un compte ?",
             signupLink: "Créer un compte",
@@ -266,7 +284,10 @@ export const translations = {
             registerTitle: "Créer un Nouveau Compte",
             registerBtn: "S'inscrire et Investir",
             fullName: "Nom Complet",
-            email: "Adresse E-mail"
+            email: "Adresse E-mail",
+            phone: "Numéro de Téléphone",
+            country: "Pays",
+            selectCountry: "Sélectionnez votre pays"
         },
         dashboard: {
             welcome: "Bon retour",
@@ -306,7 +327,23 @@ export const translations = {
                 globalAUM: "AUM Global Approx."
             },
             save: "Initialiser le Portefeuille",
-            cancel: "Annuler"
+            cancel: "Annuler",
+            manageUsers: "Gestion des Utilisateurs",
+            active: "Actif",
+            suspended: "Suspendu",
+            user: "Utilisateur",
+            email: "Email",
+            country: "Pays",
+            plan: "Plan",
+            status: "Statut",
+            allPlans: "Tous les Plans",
+            loadingUsers: "Chargement des clients...",
+            noUsersFound: "Aucun utilisateur trouvé",
+            messageAll: "Message à tous (filtrés)",
+            messageSentTo: "Message envoyé à {count} utilisateurs",
+            subject: "Sujet",
+            messageContent: "Contenu du message",
+            send: "Envoyer"
         },
         hero: {
             title: "Sécurisez Votre Avenir Financier",
@@ -364,7 +401,8 @@ export const translations = {
             subscribe: "Souscrire à un Plan",
             bronzeDesc: "Parfait pour les débutants qui cherchent à commencer à investir avec une base solide et des rendements constants.",
             silverDesc: "Notre plan le plus populaire offrant un équilibre entre risque et récompense avec des délais de règlement plus rapides pour les investisseurs actifs.",
-            goldDesc: "Niveau premium avec des rendements maximaux et le règlement le plus rapide pour les investisseurs expérimentés recherchant des performances optimales."
+            goldDesc: "Niveau premium avec des rendements maximaux et le règlement le plus rapide pour les investisseurs expérimentés recherchant des performances optimales.",
+            noPlans: "Aucun plan d'investissement disponible pour le moment."
         },
         marketInfo: {
             title: "Où et Comment Nous Investissons",

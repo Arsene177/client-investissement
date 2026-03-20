@@ -17,6 +17,7 @@ import Dashboard from './components/Dashboard';
 import AdminDashboard from './components/AdminDashboard';
 import AnalyticsPage from './components/AnalyticsPage';
 import LoginModal from './components/LoginModal';
+import ErrorBoundary from './components/ErrorBoundary';
 
 
 // Component to handle hash scrolling
@@ -62,7 +63,7 @@ function App() {
       <SignageSection />
       <Services />
       <WhyChooseUs />
-      <InvestmentPlans />
+      <InvestmentPlans onLoginClick={() => setIsLoginOpen(true)} />
       <MarketInfo />
       <AboutUs />
       <Contact />
@@ -104,11 +105,13 @@ function App() {
         </Routes>
 
         <Footer />
-        <LoginModal
-          isOpen={isLoginOpen}
-          onClose={() => setIsLoginOpen(false)}
-          onLoginSuccess={(userData) => setUser(userData)}
-        />
+        <ErrorBoundary name="LoginModal">
+          <LoginModal
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onLoginSuccess={(userData) => setUser(userData)}
+          />
+        </ErrorBoundary>
       </div>
     </Router>
   );
